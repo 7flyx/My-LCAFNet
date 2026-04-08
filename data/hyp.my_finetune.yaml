@@ -1,0 +1,28 @@
+# 针对 80.1% 模型的最后冲刺配置
+lr0: 0.001          # 学习率降低 10 倍，极其温柔地微调
+lrf: 0.1            # 最终学习率更低
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 0.0  # 不需要热身了，模型已经很强了
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+box: 0.0296         # 采用较小的损失惩罚
+cls: 0.243
+cls_pw: 1.0
+obj: 0.301
+obj_pw: 1.0
+iou_t: 0.20
+anchor_t: 4.0
+fl_gamma: 0.0
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 0.0        # 关闭剧烈变形
+translate: 0.1
+scale: 0.5
+shear: 0.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.5
+mosaic: 0.0         # 【极其关键】关闭 Mosaic 拼接！让模型看真实的完整红外图片
+mixup: 0.0
