@@ -9,6 +9,7 @@ from utils.google_utils import attempt_download
 
 
 class CrossConv(nn.Module):
+    """Cross-shaped convolution block for efficient downsampling/feature mixing."""
     # Cross Convolution Downsample
     def __init__(self, c1, c2, k=3, s=1, g=1, e=1.0, shortcut=False):
         # ch_in, ch_out, kernel, stride, groups, expansion, shortcut
@@ -19,10 +20,12 @@ class CrossConv(nn.Module):
         self.add = shortcut and c1 == c2
 
     def forward(self, x):
+        """Run cross convolution with optional residual shortcut."""
         return x + self.cv2(self.cv1(x)) if self.add else self.cv2(self.cv1(x))
 
 
 class Sum(nn.Module):
+    """Weighted or unweighted summation over multiple feature tensors."""
     # Weighted sum of 2 or more layers https://arxiv.org/abs/1911.09070
     def __init__(self, n, weight=False):  # n: number of inputs
         super(Sum, self).__init__()
@@ -32,6 +35,7 @@ class Sum(nn.Module):
             self.w = nn.Parameter(-torch.arange(1., n) / 2, requires_grad=True)  # layer weights
 
     def forward(self, x):
+        """Aggregate a tensor list into one fused tensor."""
         y = x[0]  # no weight
         if self.weight:
             w = torch.sigmoid(self.w) * 2
@@ -44,6 +48,7 @@ class Sum(nn.Module):
 
 
 class GhostConv(nn.Module):
+    """Ghost convolution that creates cheap feature maps from intrinsic maps."""
     # Ghost Convolution https://github.com/huawei-noah/ghostnet
     def __init__(self, c1, c2, k=1, s=1, g=1, act=True):  # ch_in, ch_out, kernel, stride, groups
         super(GhostConv, self).__init__()
@@ -52,11 +57,13 @@ class GhostConv(nn.Module):
         self.cv2 = Conv(c_, c_, 5, 1, None, c_, act)
 
     def forward(self, x):
+        """Produce intrinsic and cheap ghost features, then concatenate."""
         y = self.cv1(x)
         return torch.cat([y, self.cv2(y)], 1)
 
 
 class GhostBottleneck(nn.Module):
+    """Ghost bottleneck with optional depthwise stride-2 branch."""
     # Ghost Bottleneck https://github.com/huawei-noah/ghostnet
     def __init__(self, c1, c2, k=3, s=1):  # ch_in, ch_out, kernel, stride
         super(GhostBottleneck, self).__init__()
@@ -68,10 +75,12 @@ class GhostBottleneck(nn.Module):
                                       Conv(c1, c2, 1, 1, act=False)) if s == 2 else nn.Identity()
 
     def forward(self, x):
+        """Apply ghost bottleneck main path plus shortcut."""
         return self.conv(x) + self.shortcut(x)
 
 
 class MixConv2d(nn.Module):
+    """Mixed depthwise convolution with multiple kernel sizes."""
     # Mixed Depthwise Conv https://arxiv.org/abs/1907.09595
     def __init__(self, c1, c2, k=(1, 3), s=1, equal_ch=True):
         super(MixConv2d, self).__init__()
@@ -92,15 +101,18 @@ class MixConv2d(nn.Module):
         self.act = nn.LeakyReLU(0.1, inplace=True)
 
     def forward(self, x):
+        """Concatenate multi-kernel depthwise outputs and activate."""
         return x + self.act(self.bn(torch.cat([m(x) for m in self.m], 1)))
 
 
 class Ensemble(nn.ModuleList):
+    """Container that ensembles predictions from multiple models."""
     # Ensemble of models
     def __init__(self):
         super(Ensemble, self).__init__()
 
     def forward(self, x, augment=False):
+        """Run each model and concatenate outputs before NMS."""
         y = []
         for module in self:
             y.append(module(x, augment)[0])
@@ -111,6 +123,7 @@ class Ensemble(nn.ModuleList):
 
 
 def attempt_load(weights, map_location=None):
+    """Load one or many checkpoint files into a single model or ensemble."""
     # Loads an ensemble of models weights=[a,b,c] or a single model weights=[a] or weights=a
     model = Ensemble()
     for w in weights if isinstance(weights, list) else [weights]:

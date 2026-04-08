@@ -17,6 +17,14 @@ from utils.torch_utils import select_device, load_classifier, time_synchronized
 
 
 def detect(opt):
+    """Run dual-stream inference for visible/infrared image pairs.
+
+    Call chain:
+    1) load model + runtime options
+    2) build paired dataloaders for visible and infrared streams
+    3) forward prediction + NMS
+    4) rescale boxes and render/save outputs
+    """
     source1, source2, weights, view_img, save_txt, imgsz = opt.source1, opt.source2, opt.weights, opt.view_img, opt.save_txt, opt.img_size
 
     save_img = not opt.nosave and not source1.endswith('.txt')  # save inference images
@@ -46,7 +54,7 @@ def detect(opt):
         modelc = load_classifier(name='resnet101', n=2)  # initialize
         modelc.load_state_dict(torch.load('weights/resnet101.pt', map_location=device)['model']).to(device).eval()
 
-    # Set Dataloader
+    # Build paired input iterators: source1 for RGB and source2 for IR.
     vid_path, vid_writer = None, None
     if webcam:
         view_img = check_imshow()
@@ -64,6 +72,7 @@ def detect(opt):
     img_num = 0
     fps_sum = 0
     for (path, img, im0s, vid_cap), (path_, img2, im0s_, vid_cap_) in zip(dataset, dataset2):
+        # Per-sample flow: preprocess RGB/IR -> forward -> NMS -> annotate/save.
         # img0 = img[:, :, ::-1].transpose(1, 2, 0)
         # img0_ = img2[:, :, ::-1].transpose(1, 2, 0)
 
@@ -79,7 +88,7 @@ def detect(opt):
         if img2.ndimension() == 3:
             img2 = img2.unsqueeze(0)
 
-        # Inference
+        # Inference on dual-stream inputs.
         t1 = time_synchronized()
         pred = model(img, img2, augment=opt.augment)[0]
 

@@ -35,6 +35,14 @@ from einops import rearrange
 
 
 def autopad(k, p=None):  # kernel, padding
+    """Infer SAME-style padding.
+
+    Args:
+        k: int or tuple kernel size.
+        p: explicit padding or None.
+    Returns:
+        int/list padding value.
+    """
     # Pad to 'same'
     if p is None:
         p = k // 2 if isinstance(k, int) else [x // 2 for x in k]  # auto-pad
@@ -42,6 +50,7 @@ def autopad(k, p=None):  # kernel, padding
 
 
 def DWConv(c1, c2, k=1, s=1, act=True):
+    """Depthwise/grouped convolution wrapper returning a Conv block."""
     # Depthwise convolution
     return Conv(c1, c2, k, s, g=math.gcd(c1, c2), act=act)
 
@@ -55,9 +64,11 @@ class Conv(nn.Module):
         self.act = nn.SiLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H/s, W/s]."""
         return self.act(self.bn(self.conv(x)))
 
     def fuseforward(self, x):
+        """Inference path after Conv+BN fusion, shape follows `forward`."""
         return self.act(self.conv(x))
 
 
@@ -69,6 +80,7 @@ class Conv_withoutBN(nn.Module):
         self.act = nn.SiLU() if act is True else act if isinstance(act, nn.Module) else nn.Identity()
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H/s, W/s]."""
         return self.act(self.conv(x))
 
 
@@ -84,6 +96,7 @@ class TransformerLayer(nn.Module):
         self.fc2 = nn.Linear(c, c, bias=False)
 
     def forward(self, x):
+        """x: [L, B, C] -> y: [L, B, C]."""
         x = self.ma(self.q(x), self.k(x), self.v(x))[0] + x
         x = self.fc2(self.fc1(x)) + x
         return x
@@ -101,6 +114,7 @@ class TransformerBlock(nn.Module):
         self.c2 = c2
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H, W]."""
         if self.conv is not None:
             x = self.conv(x)
         b, _, w, h = x.shape
@@ -119,6 +133,7 @@ class TransformerBlock(nn.Module):
 
 
 class VGGblock(nn.Module):
+    """Stacked VGG-style conv layers followed by max pooling."""
     def __init__(self, num_convs, c1, c2):
         super(VGGblock, self).__init__()
         self.blk = []
@@ -135,12 +150,14 @@ class VGGblock(nn.Module):
         self.vggblock = nn.Sequential(*self.blk)
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H/2, W/2]."""
         out = self.vggblock(x)
 
         return out
 
 
 class ResNetblock(nn.Module):
+    """Bottleneck residual block used by the custom ResNet backbone option."""
     expansion = 4
 
     def __init__(self, c1, c2, stride=1):
@@ -160,6 +177,7 @@ class ResNetblock(nn.Module):
             )
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, 4*C2, H/stride, W/stride]."""
         out = F.relu(self.bn1(self.conv1(x)))
         out = F.relu(self.bn2(self.conv2(out)))
         out = self.bn3(self.conv3(out))
@@ -170,6 +188,7 @@ class ResNetblock(nn.Module):
 
 
 class ResNetlayer(nn.Module):
+    """A stage of ResNet blocks, with optional stem block for the first stage."""
     expansion = 4
 
     def __init__(self, c1, c2, stride=1, is_first=False, num_blocks=1):
@@ -190,6 +209,7 @@ class ResNetlayer(nn.Module):
             self.layer = nn.Sequential(*self.blk)
 
     def forward(self, x):
+        """x: [B, C, H, W] -> y: stage output tensor."""
         out = self.layer(x)
 
         return out
@@ -205,6 +225,7 @@ class Bottleneck(nn.Module):
         self.add = shortcut and c1 == c2
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H, W]."""
         return x + self.cv2(self.cv1(x)) if self.add else self.cv2(self.cv1(x))
 
 
@@ -222,6 +243,7 @@ class BottleneckCSP(nn.Module):
         self.m = nn.Sequential(*[Bottleneck(c_, c_, shortcut, g, e=1.0) for _ in range(n)])
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H, W]."""
         y1 = self.cv3(self.m(self.cv1(x)))
         y2 = self.cv2(x)
         return self.cv4(self.act(self.bn(torch.cat((y1, y2), dim=1))))
@@ -238,6 +260,7 @@ class C3(nn.Module):
         self.m = nn.Sequential(*[Bottleneck(c_, c_, shortcut, g, e=1.0) for _ in range(n)])
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H, W]."""
         return self.cv3(torch.cat((self.m(self.cv1(x)), self.cv2(x)), dim=1))
 
 
@@ -259,6 +282,7 @@ class SPP(nn.Module):
         self.m = nn.ModuleList([nn.MaxPool2d(kernel_size=x, stride=1, padding=x // 2) for x in k])
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H, W]."""
         x = self.cv1(x)
         return self.cv2(torch.cat([x] + [m(x) for m in self.m], 1))
 
@@ -273,6 +297,7 @@ class SPPF(nn.Module):
         self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
 
     def forward(self, x):
+        """x: [B, C1, H, W] -> y: [B, C2, H, W]."""
         x = self.cv1(x)
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')  # suppress torch 1.9.0 max_pool2d() warning
@@ -290,6 +315,7 @@ class Focus(nn.Module):
         # self.contract = Contract(gain=2)
 
     def forward(self, x):  # x(b,c,w,h) -> y(b,4c,w/2,h/2)
+        """x: [B, C, H, W] -> y: [B, C2, H/2, W/2] via spatial slicing + concat."""
         # print("Focus inputs shape", x.shape)
         # print()
         return self.conv(torch.cat([x[..., ::2, ::2], x[..., 1::2, ::2], x[..., ::2, 1::2], x[..., 1::2, 1::2]], 1))
@@ -303,6 +329,7 @@ class Contract(nn.Module):
         self.gain = gain
 
     def forward(self, x):
+        """x: [B, C, H, W] -> y: [B, C*s^2, H/s, W/s]."""
         N, C, H, W = x.size()  # assert (H / s == 0) and (W / s == 0), 'Indivisible gain'
         s = self.gain
         x = x.view(N, C, H // s, s, W // s, s)  # x(1,64,40,2,40,2)
@@ -317,6 +344,7 @@ class Expand(nn.Module):
         self.gain = gain
 
     def forward(self, x):
+        """x: [B, C, H, W] -> y: [B, C/s^2, H*s, W*s]."""
         N, C, H, W = x.size()  # assert C / s ** 2 == 0, 'Indivisible gain'
         s = self.gain
         x = x.view(N, s, s, C // s ** 2, H, W)  # x(1,2,2,16,80,80)
@@ -331,6 +359,7 @@ class Concat(nn.Module):
         self.d = dimension
 
     def forward(self, x):
+        """x: list[[B, Ci, H, W]] -> y: [B, sum(Ci), H, W] along dimension `d`."""
         # print(x.shape)
         return torch.cat(x, self.d)
 
@@ -342,16 +371,19 @@ class Add(nn.Module):
         self.w = weight
 
     def forward(self, x):
+        """x: [x1, x2] with same shape -> weighted sum tensor."""
         return x[0] * self.w + x[1] * (1 - self.w)
 
 
 class Add2(nn.Module):
-    #  x + transformer[0] or x + transformer[1]
+    # x + transformer[0] or x + transformer[1]
+    """Add current feature with a selected branch from a two-output transformer block."""
     def __init__(self, c1, index):
         super().__init__()
         self.index = index
 
     def forward(self, x):
+        """x: [main, aux_list] -> y: main + aux_list[index]."""
         if self.index == 0:
             return torch.add(x[0], x[1][0])
         elif self.index == 1:
@@ -360,6 +392,7 @@ class Add2(nn.Module):
 
 
 class NiNfusion(nn.Module):
+    """Fuse multiple tensors by channel concat followed by 1x1 projection."""
     def __init__(self, c1, c2, k=1, s=1, p=None, g=1):
         super(NiNfusion, self).__init__()
 
@@ -368,6 +401,7 @@ class NiNfusion(nn.Module):
         self.act = nn.SiLU()
 
     def forward(self, x):
+        """Concatenate input feature list, then project and activate."""
         y = self.concat(x)
         y = self.act(self.conv(y))
 
@@ -375,10 +409,12 @@ class NiNfusion(nn.Module):
 
 
 class DMAF(nn.Module):
+    """Dual-modal adaptive fusion using cross-modal difference-based weighting."""
     def __init__(self, c2):
         super(DMAF, self).__init__()
 
     def forward(self, x):
+        """Compute modality-aware weighted residual features for two inputs."""
         x1 = x[0]
         x2 = x[1]
 
@@ -406,6 +442,7 @@ class NMS(nn.Module):
         super(NMS, self).__init__()
 
     def forward(self, x):
+        """x: model output tuple/list -> y: NMS-filtered detections list."""
         return non_max_suppression(x[0], conf_thres=self.conf, iou_thres=self.iou, classes=self.classes)
 
 
@@ -425,6 +462,7 @@ class autoShape(nn.Module):
 
     @torch.no_grad()
     def forward(self, imgs, size=640, augment=False, profile=False):
+        """Accept tensor/np/PIL/path inputs and return Detections results."""
         # Inference from various sources. For height=640, width=1280, RGB images example inputs are:
         #   filename:   imgs = 'data/images/zidane.jpg'
         #   URI:             = 'https://github.com/ultralytics/yolov5/releases/download/v1.0/zidane.jpg'
@@ -498,6 +536,7 @@ class Detections:
         self.s = shape  # inference BCHW shape
 
     def display(self, pprint=False, show=False, save=False, crop=False, render=False, save_dir=Path('')):
+        """Unified visualization/saving backend for batch predictions."""
         for i, (im, pred) in enumerate(zip(self.imgs, self.pred)):
             str = f'image {i + 1}/{len(self.pred)}: {im.shape[0]}x{im.shape[1]} '
             if pred is not None:
@@ -545,6 +584,7 @@ class Detections:
         return self.imgs
 
     def pandas(self):
+        """Convert tensor predictions to pandas DataFrame views."""
         # return detections as pandas DataFrames, i.e. print(results.pandas().xyxy[0])
         new = copy(self)  # return copy
         ca = 'xmin', 'ymin', 'xmax', 'ymax', 'confidence', 'class', 'name'  # xyxy columns
@@ -575,11 +615,13 @@ class Classify(nn.Module):
         self.flat = nn.Flatten()
 
     def forward(self, x):
+        """x: tensor or list[tensor] -> logits: [B, C2]."""
         z = torch.cat([self.aap(y) for y in (x if isinstance(x, list) else [x])], 1)  # cat if list
         return self.flat(self.conv(z))  # flatten to x(b,c2)
 
 
 class AdaptivePool2d(nn.Module):
+    """Adaptive pooling fallback that keeps input unchanged if already small enough."""
     def __init__(self, output_h, output_w, pool_type='avg'):
         super(AdaptivePool2d, self).__init__()
 
@@ -588,6 +630,7 @@ class AdaptivePool2d(nn.Module):
         self.pool_type = pool_type
 
     def forward(self, x):
+        """x: [B, C, H, W] -> pooled tensor near [B, C, output_h, output_w]."""
         bs, c, input_h, input_w = x.shape
 
         if (input_h > self.output_h) or (input_w > self.output_w):
@@ -607,6 +650,7 @@ class AdaptivePool2d(nn.Module):
 
 
 class SE_Block(nn.Module):
+    """Squeeze-and-Excitation channel recalibration block."""
     def __init__(self, inchannel, ratio=16):
         super(SE_Block, self).__init__()
         self.gap = nn.AdaptiveAvgPool2d((1, 1))
@@ -618,6 +662,7 @@ class SE_Block(nn.Module):
         )
 
     def forward(self, x):
+        """x: [B, C, H, W] -> channel-reweighted tensor with same shape."""
         b, c, h, w = x.size()
         y = self.gap(x).view(b, c)
         y = self.fc(y).view(b, c, 1, 1)
@@ -627,6 +672,7 @@ class SE_Block(nn.Module):
 
 # 通道注意力模块
 class Channel_Attention(nn.Module):
+    """Channel attention branch used by CBAM."""
     def __init__(self, in_channels, reduction_ratio=16, pool_types=['avg', 'max']):
         '''
         :param in_channels: 输入通道数
@@ -645,6 +691,7 @@ class Channel_Attention(nn.Module):
                                         )
 
     def forward(self, x):
+        """x: [B, C, H, W] -> channel-attended tensor with same shape."""
         channel_attentions = []
 
         for pool_types in self.pool_types:
@@ -665,6 +712,7 @@ class Channel_Attention(nn.Module):
 
 # 空间注意力模块
 class Spatial_Attention(nn.Module):
+    """Spatial attention branch used by CBAM."""
     def __init__(self, kernel_size=7):
         super(Spatial_Attention, self).__init__()
 
@@ -675,6 +723,7 @@ class Spatial_Attention(nn.Module):
         )
 
     def forward(self, x):
+        """x: [B, C, H, W] -> spatial-attended tensor with same shape."""
         x_compress = torch.cat((torch.max(x, 1)[0].unsqueeze(1), torch.mean(x, 1).unsqueeze(1)),
                                dim=1)  # 在通道维度上分别计算平均值和最大值，并在通道维度上进行拼接
         x_output = self.spatial_attention(x_compress)  # 使用7x7卷积核进行卷积
@@ -684,6 +733,7 @@ class Spatial_Attention(nn.Module):
 
 
 class CBAM(nn.Module):
+    """Convolutional Block Attention Module (channel + optional spatial attention)."""
     def __init__(self, in_channels, reduction_ratio=16, pool_types=['avg', 'max'], spatial=True):
         super(CBAM, self).__init__()
 
@@ -695,6 +745,7 @@ class CBAM(nn.Module):
             self.spatial_attention = Spatial_Attention(kernel_size=7)
 
     def forward(self, x):
+        """x: [B, C, H, W] -> attention-refined tensor with same shape."""
         x_out = self.channel_attention(x)
         if self.spatial:
             x_out = self.spatial_attention(x_out)
@@ -704,14 +755,17 @@ class CBAM(nn.Module):
 
 #################################################### ACFormer
 def to_3d(x):
+    """Flatten spatial dimensions: BCHW -> B(HW)C."""
     return rearrange(x, 'b c h w -> b (h w) c')
 
 
 def to_4d(x, h, w):
+    """Restore spatial dimensions: B(HW)C -> BCHW."""
     return rearrange(x, 'b (h w) c -> b c h w', h=h, w=w)
 
 
 class BiasFree_LayerNorm(nn.Module):
+    """LayerNorm variant with learnable scale only."""
     def __init__(self, normalized_shape):
         super(BiasFree_LayerNorm, self).__init__()
         if isinstance(normalized_shape, numbers.Integral):
@@ -724,11 +778,13 @@ class BiasFree_LayerNorm(nn.Module):
         self.normalized_shape = normalized_shape
 
     def forward(self, x):
+        """x: [..., C] -> normalized tensor with same shape."""
         sigma = x.var(-1, keepdim=True, unbiased=False)
         return x / torch.sqrt(sigma + 1e-5) * self.weight
 
 
 class WithBias_LayerNorm(nn.Module):
+    """LayerNorm variant with learnable scale and bias."""
     def __init__(self, normalized_shape):
         super(WithBias_LayerNorm, self).__init__()
         if isinstance(normalized_shape, numbers.Integral):
@@ -742,12 +798,14 @@ class WithBias_LayerNorm(nn.Module):
         self.normalized_shape = normalized_shape
 
     def forward(self, x):
+        """x: [..., C] -> normalized tensor with same shape."""
         mu = x.mean(-1, keepdim=True)
         sigma = x.var(-1, keepdim=True, unbiased=False)
         return (x - mu) / torch.sqrt(sigma + 1e-5) * self.weight + self.bias
 
 
 class LayerNorm(nn.Module):
+    """2D feature-map LayerNorm wrapper using 3D rearrangement."""
     def __init__(self, dim, LayerNorm_type):
         super(LayerNorm, self).__init__()
         if LayerNorm_type == 'BiasFree':
@@ -756,11 +814,13 @@ class LayerNorm(nn.Module):
             self.body = WithBias_LayerNorm(dim)
 
     def forward(self, x):
+        """x: [B, C, H, W] -> normalized tensor with same shape."""
         h, w = x.shape[-2:]
         return to_4d(self.body(to_3d(x)), h, w)
 
 
 class Mlp(nn.Module):
+    """Feed-forward MLP used inside transformer-style blocks."""
     def __init__(self, in_features, hidden_features):
         super().__init__()
         drop = 0.
@@ -770,6 +830,7 @@ class Mlp(nn.Module):
         self.drop = nn.Dropout(drop)
 
     def forward(self, x):
+        """x: [B, C, H, W] -> y: [B, C, H, W]."""
         x = x.permute(0, 2, 3, 1)
         x = self.fc1(x)
         x = self.act(x)
@@ -781,6 +842,7 @@ class Mlp(nn.Module):
 
 
 class SelfAttention(nn.Module):
+    """Multi-head self-attention implemented with convolutional QKV projections."""
     def __init__(self, dim, num_heads, bias):
         super(SelfAttention, self).__init__()
         self.num_heads = num_heads
@@ -794,6 +856,7 @@ class SelfAttention(nn.Module):
         self.project_out = nn.Conv2d(dim, dim, kernel_size=1, bias=bias)
 
     def forward(self, x):
+        """x: [B, C, H, W] -> self-attended tensor with same shape."""
         b, c, h, w = x.shape
         qkv = self.qkv_dwconv(self.qkv(x))
         q, k, v = qkv.chunk(3, dim=1)
@@ -820,6 +883,7 @@ class SelfAttention(nn.Module):
 
 
 class CrossAttention_S(nn.Module):
+    """Single-direction cross-attention: query/key from one stream, value from another."""
     def __init__(self, dim, num_heads, bias):
         super(CrossAttention_S, self).__init__()
         self.num_heads = num_heads
@@ -838,6 +902,7 @@ class CrossAttention_S(nn.Module):
         self.project_out = nn.Conv2d(dim, dim, kernel_size=1, bias=bias)
 
     def forward(self, x):
+        """x: [fea_qk, fea_v], each [B, C, H, W] -> fused tensor [B, C, H, W]."""
         fea_0 = x[0]  # 2024/11/1 added by wwc
         fea_1 = x[1]  # 2024/11/1 added by wwc
         b, c, h, w = fea_0.shape
@@ -869,6 +934,7 @@ class CrossAttention_S(nn.Module):
 
 
 class CrossAttention_M(nn.Module):
+    """Bidirectional cross-attention between RGB and IR streams."""
     def __init__(self, dim, num_heads, bias):
         super(CrossAttention_M, self).__init__()
         self.num_heads = num_heads
@@ -881,6 +947,7 @@ class CrossAttention_M(nn.Module):
         self.project_out = nn.Conv2d(dim, dim, kernel_size=1, bias=bias)
 
     def forward(self, x):
+        """x: [rgb, ir], each [B, C, H, W] -> [rgb_out, ir_out]."""
         rgb_fea = x[0]  # 2024/11/1 added by wwc
         ir_fea = x[1]  # 2024/11/1 added by wwc
         b, c, h, w = rgb_fea.shape
@@ -925,6 +992,7 @@ class CrossAttention_M(nn.Module):
 
 
 class HAFFormer(nn.Module):
+    """Hybrid attention fusion block for RGB-IR feature integration."""
     def __init__(self, dim):
         super(HAFFormer, self).__init__()
         bias = False
@@ -941,6 +1009,7 @@ class HAFFormer(nn.Module):
         self.dwconv = nn.Conv2d(dim, dim, kernel_size=3, stride=1, padding=1, groups=dim, bias=bias)
 
     def forward(self, x):
+        """x: [rgb, ir], each [B, C, H, W] -> fused tensor [B, C, H, W]."""
         rgb_fea = x[0]
         ir_fea = x[1]
 

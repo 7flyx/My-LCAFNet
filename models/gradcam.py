@@ -22,8 +22,10 @@ def find_yolo_layer(model, layer_name):
 
 
 class YOLOV5GradCAM:
+    """Compute Grad-CAM saliency maps for selected YOLO layers."""
 
     def __init__(self, model, layer_name, img_size=(640, 640)):
+        """Register hooks on a target layer and warm up activation shapes."""
         self.model = model
         self.gradients = dict()
         self.activations = dict()
@@ -45,6 +47,7 @@ class YOLOV5GradCAM:
         print('[INFO] saliency_map size :', self.activations['value'].shape[2:])
 
     def forward(self, img_vis, img_ir, class_idx=True):
+        """Generate saliency maps for each detected instance/class score."""
         """
         Args:
             input_img: input image with shape of (1, 3, H, W)
@@ -81,4 +84,5 @@ class YOLOV5GradCAM:
         return saliency_maps, logits, preds
 
     def __call__(self, img_vis, img_ir):
+        """Alias to make the class callable like a function."""
         return self.forward(img_vis, img_ir)

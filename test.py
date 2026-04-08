@@ -43,6 +43,15 @@ def test(data,
          is_coco=False,
          opt=None,
          labels_list=None):
+        # """Validation/Test entry for RGB-IR detector.
+
+        # Call chain:
+        # 1) load model or reuse train-time model
+        # 2) build validation dataloader
+        # 3) forward + NMS per batch
+        # 4) match predictions vs targets and accumulate stats
+        # 5) compute AP metrics and optional output files
+        # """
     # Initialize/load model and set device
     training = model is not None
     if training:  # called by train.py
@@ -89,7 +98,7 @@ def test(data,
     log_imgs = 0
     if wandb_logger and wandb_logger.wandb:
         log_imgs = min(wandb_logger.log_imgs, 100)
-    # Dataloader
+    # Dataloader: dual-stream RGB-IR validation set.
     if not training:
         # if device.type != 'cpu':
         #     model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.parameters())))  # run once
@@ -113,6 +122,7 @@ def test(data,
     jdict, stats, ap, ap_class, wandb_images = [], [], [], [], []
 
     for batch_i, (img, targets, paths, shapes) in enumerate(tqdm(dataloader, desc=s)):
+        # Batch flow: preprocess -> forward -> NMS -> statistics.
         img = img.to(device, non_blocking=True)
         img = img.half() if half else img.float()  # uint8 to fp16/32
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
@@ -123,6 +133,7 @@ def test(data,
         img_ir = img[:, 3:, :, :]
 
         with torch.no_grad():
+            # Forward outputs: out for inference, train_out for loss accounting.
             # Run model
             t = time_synchronized()
             out, _, train_out = model(img_rgb, img_ir, augment=augment)  # inference and training outputs
@@ -140,7 +151,7 @@ def test(data,
             # out = confluence_process(out, 0.1, 0.5)
             t1 += time_synchronized() - t
 
-        # Statistics per image
+        # Image-level bookkeeping: write txt/json, compute TP/FP matching.
         for si, pred in enumerate(out):
             labels = targets[targets[:, 0] == si, 1:]
             nl = len(labels)

@@ -22,6 +22,7 @@ from utils.general import colorstr, check_img_size, check_requirements, file_siz
 from utils.torch_utils import select_device
 
 if __name__ == '__main__':
+    # Parse export options for TorchScript/ONNX/CoreML targets.
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', type=str, default='./yolov5s.pt', help='weights path')
     parser.add_argument('--img-size', nargs='+', type=int, default=[640, 640], help='image size')  # height, width
@@ -36,19 +37,19 @@ if __name__ == '__main__':
     set_logging()
     t = time.time()
 
-    # Load PyTorch model
+    # Load source PyTorch checkpoint and switch to inference-ready model.
     device = select_device(opt.device)
     model = attempt_load(opt.weights, map_location=device)  # load FP32 model
     labels = model.names
 
-    # Checks
+    # Validate input size compatibility with model stride.
     gs = int(max(model.stride))  # grid size (max stride)
     opt.img_size = [check_img_size(x, gs) for x in opt.img_size]  # verify img_size are gs-multiples
 
-    # Input
+    # Prepare dummy input tensor used by tracing/export backends.
     img = torch.zeros(opt.batch_size, 3, *opt.img_size).to(device)  # image size(1,3,320,192) iDetection
 
-    # Update model
+    # Replace activations with export-friendly implementations if needed.
     for k, m in model.named_modules():
         m._non_persistent_buffers_set = set()  # pytorch 1.6.0 compatibility
         if isinstance(m, models.common.Conv):  # assign export-friendly activations

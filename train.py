@@ -42,6 +42,16 @@ import global_var
 
 
 def train_rgb_ir(hyp, opt, device, tb_writer=None):
+    """Main RGB-IR training loop.
+
+    Call chain:
+    1) parse hyperparameters + dataset config
+    2) build/load model (models/yolo_test.py)
+    3) create dataloaders (utils/datasets.py)
+    4) optimize with loss (utils/loss.py)
+    5) validate each epoch via test.test(...)
+    6) save last/best checkpoints
+    """
     os.environ["WANDB_MODE"] = "offline"
     logger.info(colorstr('hyperparameters: ') + ', '.join(f'{k}={v}' for k, v in hyp.items()))
     save_dir, epochs, batch_size, total_batch_size, weights, rank = \
@@ -60,7 +70,7 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
     with open(save_dir / 'opt.yaml', 'w') as f:
         yaml.safe_dump(vars(opt), f, sort_keys=False)
 
-    # Configure
+    # Configure: random seeds, dataset yaml, class metadata.
     plots = not opt.evolve  # create plots
     cuda = device.type != 'cpu'
     init_seeds(seed=1 + rank, deterministic=True)
@@ -84,7 +94,7 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
     names = ['item'] if opt.single_cls and len(data_dict['names']) != 1 else data_dict['names']  # class names
     assert len(names) == nc, '%g names found for nc=%g dataset in %s' % (len(names), nc, opt.data)  # check
 
-    # Model wwc 2024/11/16
+    # Model build path: load pretrained checkpoint if provided, otherwise build from cfg.
     #pretrained = False
 
     pretrained = weights.endswith('.pt')
@@ -201,7 +211,7 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model).to(device)
         logger.info('Using SyncBatchNorm()')
 
-    # Trainloader
+    # Train loader: each sample packs RGB and IR into a 6-channel tensor.
     dataloader, dataset = create_dataloader_rgb_ir(train_path_rgb, train_path_ir, imgsz, batch_size, gs, opt,
                                                    hyp=hyp, augment=True, cache=opt.cache_images, rect=opt.rect, rank=rank,
                                                    world_size=opt.world_size, workers=opt.workers,
@@ -210,7 +220,7 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
     nb = len(dataloader)  # number of batches
     assert mlc < nc, 'Label class %g exceeds nc=%g in %s. Possible class labels are 0-%g' % (mlc, nc, opt.data, nc - 1)
 
-    # Process 0
+    # Validation loader and one-time checks (anchors/labels/plots) on main process.
     if rank in [-1, 0]:
         testloader, testdata = create_dataloader_rgb_ir(test_path_rgb, test_path_ir,imgsz_test, batch_size, gs, opt,
                                                         hyp=hyp, cache=opt.cache_images and not opt.notest, rect=True,
@@ -238,7 +248,7 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
                     # nn.MultiheadAttention incompatibility with DDP https://github.com/pytorch/pytorch/issues/26698
                     find_unused_parameters=any(isinstance(layer, nn.MultiheadAttention) for layer in model.modules()))
 
-    # Model parameters
+    # Attach training metadata to model for loss scaling and logging.
     hyp['box'] *= 3. / nl  # scale to layers
     hyp['cls'] *= nc / 80. * 3. / nl  # scale to classes and layers
     hyp['obj'] *= (imgsz / 640) ** 2 * 3. / nl  # scale to image size and layers
@@ -265,6 +275,7 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
                 f'Starting training for {epochs} epochs...')
 
     for epoch in range(start_epoch, epochs):  # epoch ------------------------------------------------------------------
+        # Epoch-level flow: train batches -> scheduler step -> evaluate -> checkpoint.
         model.train()
 
         # Update image weights (optional)
@@ -295,6 +306,7 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
         optimizer.zero_grad()
 
         for i, (imgs, targets, paths, _) in pbar:  # batch -------------------------------------------------------------
+            # Batch-level flow: split RGB/IR -> forward -> loss -> backward -> optimizer step.
             ni = i + nb * epoch  # number integrated batches (since train start)
             imgs = imgs.to(device, non_blocking=True).float() / 255.0  # uint8 to float32, 0-255 to 0.0-1.0
             imgs_rgb = imgs[:, :3, :, :]

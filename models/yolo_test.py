@@ -28,6 +28,7 @@ except ImportError:
 
 
 class Detect(nn.Module):
+    """Dual-stream YOLO detection head with decoded boxes and per-class logits."""
     stride = None  # strides computed during build
     export = False  # onnx export
 
@@ -45,6 +46,7 @@ class Detect(nn.Module):
         # self.m = nn.ModuleList(DCN(x, self.no * self.na, kernel_size=(3, 3), stride=1, padding=1, dilation=1, deform_groups=1) for x in ch)  # output DCN conv3x3
 
     def forward(self, x):
+        """Apply prediction convs and decode outputs for inference mode."""
         # x = x.copy()  # for profiling
         z = []  # inference output
         logits_ = []
@@ -70,13 +72,16 @@ class Detect(nn.Module):
 
     @staticmethod
     def _make_grid(nx=20, ny=20):
+        """Create coordinate grid used by box center decoding."""
         yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
         return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
 
 
 class Model(nn.Module):
+    """Construct multispectral YOLO model and execute dual-input forward passes."""
 
     def __init__(self, cfg='yolov5s.yaml', ch=3, nc=None, anchors=None):  # model, input channels, number of classes
+        """Initialize graph, detection stride/anchors, and model parameters."""
         super(Model, self).__init__()
         if isinstance(cfg, dict):
             self.yaml = cfg  # model dict
@@ -118,6 +123,7 @@ class Model(nn.Module):
         logger.info('')
 
     def forward(self, x, x2, augment=False, profile=False):
+        """Forward pass with optional test-time augmentation."""
         if augment:
             img_size = x.shape[-2:]  # height, width
             s = [1, 0.83, 0.67]  # scales
@@ -138,6 +144,7 @@ class Model(nn.Module):
             return self.forward_once(x, x2, profile)  # single-scale inference, train
 
     def forward_once(self, x, x2, profile=False):
+        """Run one forward pass through parsed layers with dual-stream routing."""
         y, dt = [], []  # outputs
         i = 0
         for m in self.model:
@@ -174,6 +181,7 @@ class Model(nn.Module):
         return x
 
     def _initialize_biases(self, cf=None):  # initialize biases into Detect(), cf is class frequency
+        """Initialize Detect head biases for objectness and class logits."""
         # https://arxiv.org/abs/1708.02002 section 3.3
         # cf = torch.bincount(torch.tensor(np.concatenate(dataset.labels, 0)[:, 0]).long(), minlength=nc) + 1.
         m = self.model[-1]  # Detect() module
@@ -184,6 +192,7 @@ class Model(nn.Module):
             mi.bias = torch.nn.Parameter(b.view(-1), requires_grad=True)
 
     def _print_biases(self):
+        """Print Detect bias statistics for debugging."""
         m = self.model[-1]  # Detect() module
         for mi in m.m:  # from
             b = mi.bias.detach().view(m.na, -1).T  # conv.bias(255) to (3,85)
@@ -191,6 +200,7 @@ class Model(nn.Module):
                 ('%6g Conv2d.bias:' + '%10.3g' * 6) % (mi.weight.shape[1], *b[:5].mean(1).tolist(), b[5:].mean()))
 
     def fuse(self):  # fuse model Conv2d() + BatchNorm2d() layers
+        """Fuse Conv+BN modules to speed up inference."""
         logger.info('Fusing layers... ')
         for m in self.model.modules():
             if type(m) is Conv and hasattr(m, 'bn'):
@@ -201,6 +211,7 @@ class Model(nn.Module):
         return self
 
     def nms(self, mode=True):  # add or remove NMS module
+        """Add or remove explicit NMS module at network tail."""
         present = type(self.model[-1]) is NMS  # last layer is NMS
         if mode and not present:
             logger.info('Adding NMS... ')
@@ -215,16 +226,19 @@ class Model(nn.Module):
         return self
 
     def autoshape(self):  # add autoShape module
+        """Wrap model with input-robust autoShape API."""
         logger.info('Adding autoShape... ')
         m = autoShape(self)  # wrap model
         copy_attr(m, self, include=('yaml', 'nc', 'hyp', 'names', 'stride'), exclude=())  # copy attributes
         return m
 
     def info(self, verbose=False, img_size=640):  # print model information
+        """Print model structure summary."""
         model_info(self, verbose, img_size)
 
 
 def parse_model(d, ch):  # model_dict, input_channels(3)
+    """Parse YAML graph into a Sequential module list and save-index list."""
     logger.info('\n%3s%18s%3s%10s  %-40s%-30s' % ('', 'from', 'n', 'params', 'module', 'arguments'))
     anchors, nc, gd, gw = d['anchors'], d['nc'], d['depth_multiple'], d['width_multiple']
     na = (len(anchors[0]) // 2) if isinstance(anchors, list) else anchors  # number of anchors
