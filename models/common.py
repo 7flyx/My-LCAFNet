@@ -1206,7 +1206,7 @@ class Mamba2Simple(nn.Module):
 
 
 class FusionMamba2(nn.Module):
-    def __init__(self, dim, d_state=128, d_conv=4, expand=2, headdim=64, ngroups=1, use_mem_eff_path=True):
+    def __init__(self, dim, d_state=128, d_conv=4, expand=2, headdim=64, ngroups=1, use_mem_eff_path=False):
         super().__init__()
         self.pre = nn.Conv2d(dim * 2, dim, kernel_size=1, stride=1, padding=0, bias=False)
         self.act = nn.GELU()
