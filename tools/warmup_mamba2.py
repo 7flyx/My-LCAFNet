@@ -1,5 +1,12 @@
 import argparse
+from pathlib import Path
+import sys
+
 import torch
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[1]
+sys.path.append(str(ROOT))
 
 from models.yolo_test import Model
 from utils.general import check_file
