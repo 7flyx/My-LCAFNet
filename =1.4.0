@@ -1,0 +1,19 @@
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple/
+Collecting causal-conv1d
+  Using cached https://pypi.tuna.tsinghua.edu.cn/packages/63/15/ec51d77a2df03ee93410f8ee97fceeb7181da213813c51243e9dd6d7e144/causal_conv1d-1.6.1.tar.gz (29 kB)
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: torch in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from causal-conv1d) (1.13.1)
+Requirement already satisfied: packaging in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from causal-conv1d) (26.0)
+Requirement already satisfied: ninja in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from causal-conv1d) (1.13.0)
+Requirement already satisfied: typing-extensions in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from torch->causal-conv1d) (4.15.0)
+Requirement already satisfied: nvidia-cuda-runtime-cu11==11.7.99 in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from torch->causal-conv1d) (11.7.99)
+Requirement already satisfied: nvidia-cudnn-cu11==8.5.0.96 in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from torch->causal-conv1d) (8.5.0.96)
+Requirement already satisfied: nvidia-cublas-cu11==11.10.3.66 in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from torch->causal-conv1d) (11.10.3.66)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu11==11.7.99 in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from torch->causal-conv1d) (11.7.99)
+Requirement already satisfied: setuptools in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch->causal-conv1d) (80.9.0)
+Requirement already satisfied: wheel in /home/cqu/anaconda3/envs/LCAFNet_env/lib/python3.9/site-packages (from nvidia-cublas-cu11==11.10.3.66->torch->causal-conv1d) (0.45.1)
+Building wheels for collected packages: causal-conv1d
+  Building wheel for causal-conv1d (pyproject.toml): started
+  Building wheel for causal-conv1d (pyproject.toml): finished with status 'error'
+Failed to build causal-conv1d

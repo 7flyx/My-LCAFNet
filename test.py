@@ -240,6 +240,87 @@ def test(data,
             # Append statistics (correct, conf, pcls, tcls)
             stats.append((correct.cpu(), pred[:, 4].cpu(), pred[:, 5].cpu(), tcls))
 
+            # ==========================================
+            # 🚀 升级版：Bad Case 挖掘与 2x2 田字格对比可视化
+            # ==========================================
+            import cv2
+            import numpy as np
+
+            # 1. 判定是否为 Bad Case
+            correct_at_50 = correct[:, 0].sum().item() if len(pred) > 0 else 0
+            fp_count = len(pred) - correct_at_50  # 误检
+            fn_count = nl - correct_at_50         # 漏检
+            is_bad_case = (fp_count > 0) or (fn_count > 0)
+
+            if is_bad_case:
+                bad_cases_dir = save_dir / 'bad_cases'
+                bad_cases_dir.mkdir(parents=True, exist_ok=True)
+
+                # 2. 提取 numpy 图像矩阵
+                img_rgb_viz = (img_rgb[si].cpu().numpy().transpose(1, 2, 0) * 255).astype(np.uint8).copy()
+                img_rgb_viz = cv2.cvtColor(img_rgb_viz, cv2.COLOR_RGB2BGR)
+
+                ir_channels = img_ir.shape[1]
+                if ir_channels == 1:
+                    img_ir_viz = (img_ir[si].cpu().numpy().transpose(1, 2, 0) * 255).astype(np.uint8).copy()
+                    img_ir_viz = cv2.cvtColor(img_ir_viz, cv2.COLOR_GRAY2BGR)
+                else:
+                    img_ir_viz = (img_ir[si].cpu().numpy().transpose(1, 2, 0) * 255).astype(np.uint8).copy()
+                    img_ir_viz = cv2.cvtColor(img_ir_viz, cv2.COLOR_RGB2BGR)
+
+                # 3. 备份纯净的原图 (Raw Images)
+                raw_rgb = img_rgb_viz.copy()
+                raw_ir = img_ir_viz.copy()
+                
+                # 给原图打上黑色半透明背景和白色标签，方便辨认
+                cv2.rectangle(raw_rgb, (0, 0), (160, 40), (0, 0, 0), -1)
+                cv2.putText(raw_rgb, "Raw RGB", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                cv2.rectangle(raw_ir, (0, 0), (140, 40), (0, 0, 0), -1)
+                cv2.putText(raw_ir, "Raw IR", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+                # 4. 绘制真实框(绿)与预测框(红)的内部函数
+                def draw_boxes(img_to_draw, is_rgb=True):
+                    h, w = img_to_draw.shape[:2]
+                    # 打标签
+                    label_text = "Annotated RGB" if is_rgb else "Annotated IR"
+                    cv2.rectangle(img_to_draw, (0, 0), (260, 40), (0, 0, 0), -1)
+                    cv2.putText(img_to_draw, label_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+                    if nl:
+                        for cls, *xywh in labels.tolist():
+                            xc, yc, bw, bh = xywh
+                            x1, y1 = int((xc - bw / 2) * w), int((yc - bh / 2) * h)
+                            x2, y2 = int((xc + bw / 2) * w), int((yc + bh / 2) * h)
+                            cv2.rectangle(img_to_draw, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                            cv2.putText(img_to_draw, f"GT:{names[int(cls)]}", (x1, max(y1 - 8, 0)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+                    if len(pred) > 0:
+                        for *xyxy, conf, cls in pred.tolist():
+                            x1, y1, x2, y2 = [int(v) for v in xyxy]
+                            cv2.rectangle(img_to_draw, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                            cv2.putText(img_to_draw, f"Pred:{names[int(cls)]} {conf:.2f}", (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                    return img_to_draw
+
+                # 5. 在下方图像画框
+                img_rgb_viz = draw_boxes(img_rgb_viz, is_rgb=True)
+                img_ir_viz = draw_boxes(img_ir_viz, is_rgb=False)
+
+                # 6. 田字格拼接 (先水平拼出两行，再垂直拼在一起)
+                top_row = np.hstack((raw_rgb, raw_ir))          # 原图行
+                bottom_row = np.hstack((img_rgb_viz, img_ir_viz)) # 标注行
+                combined_img = np.vstack((top_row, bottom_row))
+
+                # 7. 在最左上角打上总的错误统计
+                error_type = f"Error: FP:{int(fp_count)} FN:{int(fn_count)}"
+                cv2.rectangle(combined_img, (0, 0), (320, 45), (0, 0, 0), -1) # 加个底色更清晰
+                cv2.putText(combined_img, error_type, (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 165, 255), 3)
+
+                # 8. 存入硬盘
+                img_name = Path(paths[si]).name
+                save_path = bad_cases_dir / f"bad_{img_name}"
+                cv2.imwrite(str(save_path), combined_img)
+            # ==========================================
+            
         # mem = '%.4gM' % (torch.cuda.memory_reserved() / 1E6 if torch.cuda.is_available() else 0)
         # print(mem)
 

@@ -231,10 +231,10 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
 
     layers, save, c2 = [], [], ch[-1]  # layers, savelist, ch out
     for i, (f, n, m, args) in enumerate(d['backbone'] + d['head']):  # from, number, module, args
-        m = eval(m) if isinstance(m, str) else m  # eval strings
+        m = eval(m) if isinstance(m, str) else m  # eval strings , 将字符串 m 变成 m这个python类
         for j, a in enumerate(args):
             try:
-                args[j] = eval(a) if isinstance(a, str) else a  # eval strings
+                args[j] = eval(a) if isinstance(a, str) else a  # eval strings，将字符串 m 变成 m这个python类
             except:
                 pass
 
@@ -242,12 +242,12 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
         if m in [Conv, GhostConv, Bottleneck, GhostBottleneck, SPP, DWConv, MixConv2d, Focus, CrossConv, BottleneckCSP,
                  C3, C3TR]:
             c1, c2 = ch[f], args[0]
-            if c2 != no:  # if not output
-                c2 = make_divisible(c2 * gw, 8)
+            if c2 != no:  # if not output layer
+                c2 = make_divisible(c2 * gw, 8) # 通道膨胀因子，并把结果四舍五入，凑成 8 的倍数
 
             args = [c1, c2, *args[1:]]
             if m in [BottleneckCSP, C3, C3TR]:
-                args.insert(2, n)  # number of repeats
+                args.insert(2, n)  # number of repeats, 重复的模块数
                 n = 1
         elif m is nn.BatchNorm2d:
             args = [ch[f]]

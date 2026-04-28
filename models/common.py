@@ -881,7 +881,7 @@ class SelfAttention(nn.Module):
         return out
 
 
-
+# 交叉注意力
 class CrossAttention_S(nn.Module):
     """Single-direction cross-attention: query/key from one stream, value from another."""
     def __init__(self, dim, num_heads, bias):
@@ -990,17 +990,18 @@ class CrossAttention_M(nn.Module):
         return [out_rgb, out_ir]
 
 
-
+# 自定义的融合模块
 class HAFFormer(nn.Module):
     """Hybrid attention fusion block for RGB-IR feature integration."""
     def __init__(self, dim):
         super(HAFFormer, self).__init__()
         bias = False
-        num_heads = 8
+        num_heads = 8 # 头的数量
         self.dim = dim
 
-        self.mhca_rgb = CrossAttention_S(dim, num_heads, bias)
-        self.mhca_ir = CrossAttention_S(dim, num_heads, bias)
+        # 多头的 交叉注意力
+        self.mhca_rgb = CrossAttention_S(dim, num_heads, bias) # VG-CAB模块
+        self.mhca_ir = CrossAttention_S(dim, num_heads, bias) # IG-CAB模块
 
         # Concat
         self.concat = Concat(dimension=1)
@@ -1015,12 +1016,12 @@ class HAFFormer(nn.Module):
 
         # Cross Attention
         out_fea = self.mhca_rgb([rgb_fea, ir_fea])
-        out_fea_rgb = out_fea + rgb_fea
+        out_fea_rgb = out_fea + rgb_fea # 残差连接
 
         out_fea = self.mhca_ir([ir_fea, rgb_fea])
-        out_fea_ir = out_fea + ir_fea
+        out_fea_ir = out_fea + ir_fea # 残差连接
 
-        # Gated Fusion
+        # Gated Fusion，门控融合机制（GFB模块）
         fea_cat = self.concat([out_fea_rgb, out_fea_ir])
         fea_conv = self.conv(fea_cat)
         w = self.dwconv(fea_conv).sigmoid()
