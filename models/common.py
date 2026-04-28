@@ -20,6 +20,20 @@ from torch.autograd import Function
 from torch.nn.modules.utils import _triple, _pair, _single
 from einops import rearrange, repeat
 
+try:
+    from causal_conv1d import causal_conv1d_fn
+except ImportError:
+    causal_conv1d_fn = None
+
+try:
+    from mamba_ssm.ops.triton.layernorm_gated import RMSNorm as RMSNormGated, LayerNorm
+    from mamba_ssm.ops.triton.ssd_combined import mamba_chunk_scan_combined
+    from mamba_ssm.ops.triton.ssd_combined import mamba_split_conv1d_scan_combined
+except ImportError:
+    RMSNormGated, LayerNorm = None, None
+    mamba_chunk_scan_combined = None
+    mamba_split_conv1d_scan_combined = None
+
 from utils.datasets import letterbox
 from utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh, save_one_box
 from utils.plots import colors, plot_one_box
@@ -1028,3 +1042,190 @@ class HAFFormer(nn.Module):
         new_fea = w * out_fea_rgb + (1 - w) * out_fea_ir
 
         return new_fea
+
+
+class Mamba2Simple(nn.Module):
+    def __init__(
+        self,
+        d_model,
+        d_state=128,
+        d_conv=4,
+        conv_init=None,
+        expand=2,
+        headdim=64,
+        ngroups=1,
+        A_init_range=(1, 16),
+        dt_min=0.001,
+        dt_max=0.1,
+        dt_init_floor=1e-4,
+        dt_limit=(0.0, float("inf")),
+        learnable_init_states=False,
+        activation="swish",
+        bias=False,
+        conv_bias=True,
+        chunk_size=256,
+        use_mem_eff_path=True,
+        layer_idx=None,
+        device=None,
+        dtype=None,
+    ):
+        if RMSNormGated is None or mamba_split_conv1d_scan_combined is None:
+            raise ImportError("mamba_ssm is required for Mamba2Simple")
+
+        factory_kwargs = {"device": device, "dtype": dtype}
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
+        self.d_conv = d_conv
+        self.conv_init = conv_init
+        self.expand = expand
+        self.d_inner = self.expand * self.d_model
+        self.headdim = headdim
+        self.ngroups = ngroups
+        assert self.d_inner % self.headdim == 0
+        self.nheads = self.d_inner // self.headdim
+        self.dt_limit = dt_limit
+        self.learnable_init_states = learnable_init_states
+        self.activation = activation
+        self.chunk_size = chunk_size
+        self.use_mem_eff_path = use_mem_eff_path
+        self.layer_idx = layer_idx
+
+        d_in_proj = 2 * self.d_inner + 2 * self.ngroups * self.d_state + self.nheads
+        self.in_proj = nn.Linear(self.d_model, d_in_proj, bias=bias, **factory_kwargs)
+
+        conv_dim = self.d_inner + 2 * self.ngroups * self.d_state
+        self.conv1d = nn.Conv1d(
+            in_channels=conv_dim,
+            out_channels=conv_dim,
+            bias=conv_bias,
+            kernel_size=d_conv,
+            groups=conv_dim,
+            padding=d_conv - 1,
+            **factory_kwargs,
+        )
+        if self.conv_init is not None:
+            nn.init.uniform_(self.conv1d.weight, -self.conv_init, self.conv_init)
+
+        if self.learnable_init_states:
+            self.init_states = nn.Parameter(torch.zeros(self.nheads, self.headdim, self.d_state, **factory_kwargs))
+            self.init_states._no_weight_decay = True
+
+        self.act = nn.SiLU()
+
+        dt = torch.exp(
+            torch.rand(self.nheads, **factory_kwargs) * (math.log(dt_max) - math.log(dt_min))
+            + math.log(dt_min)
+        )
+        dt = torch.clamp(dt, min=dt_init_floor)
+        inv_dt = dt + torch.log(-torch.expm1(-dt))
+        self.dt_bias = nn.Parameter(inv_dt)
+        self.dt_bias._no_weight_decay = True
+
+        assert A_init_range[0] > 0 and A_init_range[1] >= A_init_range[0]
+        A = torch.empty(self.nheads, dtype=torch.float32, device=device).uniform_(*A_init_range)
+        A_log = torch.log(A).to(dtype=dtype)
+        self.A_log = nn.Parameter(A_log)
+        self.A_log._no_weight_decay = True
+
+        self.D = nn.Parameter(torch.ones(self.nheads, device=device))
+        self.D._no_weight_decay = True
+
+        self.norm = RMSNormGated(self.d_inner, eps=1e-5, norm_before_gate=False, **factory_kwargs)
+
+        self.out_proj = nn.Linear(self.d_inner, self.d_model, bias=bias, **factory_kwargs)
+
+    def forward(self, u, seq_idx=None):
+        batch, seqlen, _ = u.shape
+
+        zxbcdt = self.in_proj(u)
+        A = -torch.exp(self.A_log)
+        initial_states = repeat(self.init_states, "... -> b ...", b=batch) if self.learnable_init_states else None
+        dt_limit_kwargs = {} if self.dt_limit == (0.0, float("inf")) else dict(dt_limit=self.dt_limit)
+
+        if self.use_mem_eff_path:
+            out = mamba_split_conv1d_scan_combined(
+                zxbcdt,
+                rearrange(self.conv1d.weight, "d 1 w -> d w"),
+                self.conv1d.bias,
+                self.dt_bias,
+                A,
+                D=self.D,
+                chunk_size=self.chunk_size,
+                seq_idx=seq_idx,
+                activation=self.activation,
+                rmsnorm_weight=self.norm.weight,
+                rmsnorm_eps=self.norm.eps,
+                outproj_weight=self.out_proj.weight,
+                outproj_bias=self.out_proj.bias,
+                headdim=self.headdim,
+                ngroups=self.ngroups,
+                norm_before_gate=False,
+                initial_states=initial_states,
+                **dt_limit_kwargs,
+            )
+        else:
+            z, xBC, dt = torch.split(
+                zxbcdt, [self.d_inner, self.d_inner + 2 * self.ngroups * self.d_state, self.nheads], dim=-1
+            )
+            dt = F.softplus(dt + self.dt_bias)
+            assert self.activation in ["silu", "swish"]
+
+            if causal_conv1d_fn is None or self.activation not in ["silu", "swish"]:
+                xBC = self.act(self.conv1d(xBC.transpose(1, 2)).transpose(1, 2))
+                xBC = xBC[:, :seqlen, :]
+            else:
+                xBC = causal_conv1d_fn(
+                    x=xBC.transpose(1, 2),
+                    weight=rearrange(self.conv1d.weight, "d 1 w -> d w"),
+                    bias=self.conv1d.bias,
+                    activation=self.activation,
+                ).transpose(1, 2)
+
+            x, B, C = torch.split(
+                xBC, [self.d_inner, self.ngroups * self.d_state, self.ngroups * self.d_state], dim=-1
+            )
+            y = mamba_chunk_scan_combined(
+                rearrange(x, "b l (h p) -> b l h p", p=self.headdim),
+                dt,
+                A,
+                rearrange(B, "b l (g n) -> b l g n", g=self.ngroups),
+                rearrange(C, "b l (g n) -> b l g n", g=self.ngroups),
+                chunk_size=self.chunk_size,
+                D=self.D,
+                z=None,
+                seq_idx=seq_idx,
+                initial_states=initial_states,
+                **dt_limit_kwargs,
+            )
+            y = rearrange(y, "b l h p -> b l (h p)")
+
+            y = self.norm(y, z)
+            out = self.out_proj(y)
+        return out
+
+
+class FusionMamba2(nn.Module):
+    def __init__(self, dim, d_state=128, d_conv=4, expand=2, headdim=64, ngroups=1, use_mem_eff_path=True):
+        super().__init__()
+        self.pre = nn.Conv2d(dim * 2, dim, kernel_size=1, stride=1, padding=0, bias=False)
+        self.act = nn.GELU()
+        self.mamba = Mamba2Simple(
+            d_model=dim,
+            d_state=d_state,
+            d_conv=d_conv,
+            expand=expand,
+            headdim=headdim,
+            ngroups=ngroups,
+            use_mem_eff_path=use_mem_eff_path,
+        )
+
+    def forward(self, x):
+        rgb_fea = x[0]
+        ir_fea = x[1]
+        fused = self.act(self.pre(torch.cat([rgb_fea, ir_fea], dim=1)))
+        b, c, h, w = fused.shape
+        seq = rearrange(fused, "b c h w -> b (h w) c")
+        seq = self.mamba(seq)
+        out = rearrange(seq, "b (h w) c -> b c h w", h=h, w=w)
+        return out
