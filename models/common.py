@@ -1065,6 +1065,7 @@ class Mamba2Simple(nn.Module):
         conv_bias=True,
         chunk_size=256,
         use_mem_eff_path=True,
+        use_causal_conv=False,
         layer_idx=None,
         device=None,
         dtype=None,
@@ -1089,6 +1090,7 @@ class Mamba2Simple(nn.Module):
         self.activation = activation
         self.chunk_size = chunk_size
         self.use_mem_eff_path = use_mem_eff_path
+        self.use_causal_conv = use_causal_conv
         self.layer_idx = layer_idx
 
         d_in_proj = 2 * self.d_inner + 2 * self.ngroups * self.d_state + self.nheads
@@ -1171,7 +1173,7 @@ class Mamba2Simple(nn.Module):
             dt = F.softplus(dt + self.dt_bias)
             assert self.activation in ["silu", "swish"]
 
-            if causal_conv1d_fn is None or self.activation not in ["silu", "swish"]:
+            if (not self.use_causal_conv) or causal_conv1d_fn is None or self.activation not in ["silu", "swish"]:
                 xBC = self.act(self.conv1d(xBC.transpose(1, 2)).transpose(1, 2))
                 xBC = xBC[:, :seqlen, :]
             else:
@@ -1218,6 +1220,7 @@ class FusionMamba2(nn.Module):
             headdim=headdim,
             ngroups=ngroups,
             use_mem_eff_path=use_mem_eff_path,
+            use_causal_conv=False,
         )
 
     def forward(self, x):
