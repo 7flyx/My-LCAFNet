@@ -40,8 +40,8 @@ backbone:
    [-1, 1, SPPF, [1024, 5]],  # 19
 
     ######### Fusion Block #############
-  [[2,12], 1, FusionMamba2, [128]],    # 20 two stream fuse，P2阶段，通过C3模块提取更丰富的特征之后
-  [[4,14], 1, FusionMamba2, [256]],    # 21 two stream fuse，P3阶段，通过C3模块提取更丰富的特征之后
+  [[2,12], 1, HAFFormer, [128]],    # 20 two stream fuse，P2阶段，通过C3模块提取更丰富的特征之后
+  [[4,14], 1, HAFFormer, [256]],    # 21 two stream fuse，P3阶段，通过C3模块提取更丰富的特征之后
   [[6,16], 1, FusionMamba2, [512]],    # 22 two stream fuse，P4阶段，通过C3模块提取更丰富的特征之后
   [[9,19], 1, FusionMamba2, [1024]],    # 23 two stream fuse，P5阶段，通过C3模块提取更丰富的特征之后
   ]
