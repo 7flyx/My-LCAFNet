@@ -1173,6 +1173,7 @@ class Mamba2Simple(nn.Module):
             dt = F.softplus(dt + self.dt_bias)
             assert self.activation in ["silu", "swish"]
 
+            xBC = xBC.contiguous()
             if (not self.use_causal_conv) or causal_conv1d_fn is None or self.activation not in ["silu", "swish"]:
                 xBC = self.act(self.conv1d(xBC.transpose(1, 2)).transpose(1, 2))
                 xBC = xBC[:, :seqlen, :]
@@ -1220,7 +1221,7 @@ class FusionMamba2(nn.Module):
             headdim=headdim,
             ngroups=ngroups,
             use_mem_eff_path=use_mem_eff_path,
-            use_causal_conv=False,
+            use_causal_conv=True,
         )
 
     def forward(self, x):
