@@ -308,7 +308,7 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
             c2 = c1 // 2
             args = [c1, c2, *args]
         # elif m is TransformerFusionBlock:
-        elif m is HAFFormer:  # 2024/11/18 wwc 修改
+        elif m in [HAFFormer, FusionMamba2]:  # 2024/11/18 wwc 修改
             c2 = ch[f[0]]
             args = [c2, *args[1:]]
         else:
