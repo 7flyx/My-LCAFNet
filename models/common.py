@@ -1457,6 +1457,18 @@ class FreqDecoupledFusion(nn.Module):
         """
         rgb_fea = x[0]
         ir_fea = x[1]
+        _, _, H_orig, W_orig = rgb_fea.shape
+
+        # Handle odd spatial sizes: the Conv2d(k=2,s=2,p=0) in wavelet
+        # decomposition truncates the last row/column when the input size
+        # is odd, breaking the reconstruction round-trip.  We pad to even
+        # before decomposition and crop back to the original size after
+        # reconstruction — zero information loss.
+        pad_h = H_orig % 2
+        pad_w = W_orig % 2
+        if pad_h or pad_w:
+            rgb_fea = F.pad(rgb_fea, (0, pad_w, 0, pad_h))
+            ir_fea = F.pad(ir_fea, (0, pad_w, 0, pad_h))
 
         # ---------- 1. Frequency decomposition (learnable, Haar-init) ----------
         LL_rgb, LH_rgb, HL_rgb, HH_rgb = self.decomp_rgb(rgb_fea)
@@ -1490,4 +1502,9 @@ class FreqDecoupledFusion(nn.Module):
 
         # ---------- 4. Reconstruction ------------------------------------------
         out = self.recon(LL_fused, LH_fused, HL_fused, HH_fused)  # [B, C, H, W]
+
+        # Crop back to original size if padding was added for odd dimensions
+        if pad_h or pad_w:
+            out = out[:, :, :H_orig, :W_orig]
+
         return out
