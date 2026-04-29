@@ -1233,3 +1233,261 @@ class FusionMamba2(nn.Module):
         seq = self.mamba(seq)
         out = rearrange(seq, "b (h w) c -> b c h w", h=h, w=w)
         return out
+
+
+# ===========================================================================
+# Learnable Wavelet-Inspired Frequency Decomposition
+# Replaces fixed Haar wavelet transform with learnable grouped Conv2d.
+# Decomposition:  [B, C, H, W] -> LL, LH, HL, HH each [B, C, H/2, W/2]
+# Reconstruction: [B, 4C, H/2, W/2] -> [B, C, H, W]
+# ===========================================================================
+
+class LearnableWaveletDecomp(nn.Module):
+    """Learnable frequency decomposition via grouped Conv2d (kernel=2, stride=2).
+
+    Decomposes each input channel independently into 4 frequency bands:
+      LL (low-freq avg)  — global smooth background, lighting distribution
+      LH (high-freq horz) — horizontal edges, vertical texture changes
+      HL (high-freq vert) — vertical edges, horizontal texture changes
+      HH (high-freq diag) — diagonal edges, corners, fine grain
+
+    Weights are initialised with the standard 2D Haar kernel so that training
+    starts from a well-conditioned orthogonal decomposition, then adapts
+    to the detection task (e.g. asymmetric IR vs. RGB basis).
+    """
+
+    def __init__(self, in_channels: int):
+        super().__init__()
+        self.in_channels = in_channels
+        # groups=in_channels → each channel is decomposed independently
+        # out=in_channels*4 → 4 frequency components per input channel
+        self.decomp_conv = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=in_channels * 4,
+            kernel_size=2,
+            stride=2,
+            groups=in_channels,
+            bias=False,
+        )
+        self._init_haar()
+
+    def _init_haar(self):
+        """Initialise convolution weights with the 2D Haar wavelet kernels.
+
+        For each group (input channel) the 4 output channels get:
+            W_LL  = [[1, 1], [1, 1]] / 2   (averaging)
+            W_LH  = [[1,-1], [1,-1]] / 2   (horizontal detail)
+            W_HL  = [[1, 1],[-1,-1]] / 2   (vertical detail)
+            W_HH  = [[1,-1],[-1, 1]] / 2   (diagonal detail)
+        """
+        with torch.no_grad():
+            w = self.decomp_conv.weight  # [C*4, 1, 2, 2]
+            for i in range(self.in_channels):
+                idx = i * 4
+                w[idx + 0, 0, :, :] = torch.tensor(
+                    [[1.0, 1.0], [1.0, 1.0]]
+                ) / 2.0
+                w[idx + 1, 0, :, :] = torch.tensor(
+                    [[1.0, -1.0], [1.0, -1.0]]
+                ) / 2.0
+                w[idx + 2, 0, :, :] = torch.tensor(
+                    [[1.0, 1.0], [-1.0, -1.0]]
+                ) / 2.0
+                w[idx + 3, 0, :, :] = torch.tensor(
+                    [[1.0, -1.0], [-1.0, 1.0]]
+                ) / 2.0
+
+    def forward(self, x: torch.Tensor):
+        """Decompose feature map into 4 frequency bands.
+
+        Args:
+            x: [B, C, H, W]
+
+        Returns:
+            (LL, LH, HL, HH): each [B, C, H/2, W/2]
+        """
+        out = self.decomp_conv(x)  # [B, 4C, H/2, W/2]
+        LL = out[:, 0::4, :, :]    # [B, C, H/2, W/2] — low-frequency average
+        LH = out[:, 1::4, :, :]    # [B, C, H/2, W/2] — horizontal detail
+        HL = out[:, 2::4, :, :]    # [B, C, H/2, W/2] — vertical detail
+        HH = out[:, 3::4, :, :]    # [B, C, H/2, W/2] — diagonal detail
+        return LL, LH, HL, HH
+
+
+class LearnableWaveletRecon(nn.Module):
+    """Inverse of learnable wavelet decomposition via grouped ConvTranspose2d.
+
+    Takes the four frequency bands (LL, LH, HL, HH) and reconstructs the
+    original-resolution feature map through a grouped transposed convolution.
+    Weights are Haar-initialised and then learnable.
+    """
+
+    def __init__(self, channels: int):
+        super().__init__()
+        self.channels = channels
+        # groups=channels → each group of 4 input channels maps to 1 output channel
+        self.recon_conv = nn.ConvTranspose2d(
+            in_channels=channels * 4,
+            out_channels=channels,
+            kernel_size=2,
+            stride=2,
+            groups=channels,
+            bias=False,
+        )
+        self._init_haar()
+
+    def _init_haar(self):
+        """Initialise with inverse 2D Haar wavelet kernels.
+
+        The inverse Haar kernel for ConvTranspose2d is identical to the
+        forward Haar kernel because the transform is orthogonal (up to scale).
+        Each group maps [LL, LH, HL, HH] → 1 output channel over a 2×2 patch.
+        """
+        with torch.no_grad():
+            w = self.recon_conv.weight  # [C*4, 1, 2, 2]
+            for i in range(self.channels):
+                idx = i * 4
+                w[idx + 0, 0, :, :] = torch.tensor(
+                    [[1.0, 1.0], [1.0, 1.0]]
+                ) / 2.0
+                w[idx + 1, 0, :, :] = torch.tensor(
+                    [[1.0, -1.0], [1.0, -1.0]]
+                ) / 2.0
+                w[idx + 2, 0, :, :] = torch.tensor(
+                    [[1.0, 1.0], [-1.0, -1.0]]
+                ) / 2.0
+                w[idx + 3, 0, :, :] = torch.tensor(
+                    [[1.0, -1.0], [-1.0, 1.0]]
+                ) / 2.0
+
+    def forward(self, LL: torch.Tensor, LH: torch.Tensor,
+                HL: torch.Tensor, HH: torch.Tensor):
+        """Reconstruct feature map from 4 frequency bands.
+
+        Args:
+            LL, LH, HL, HH: each [B, C, H/2, W/2]
+
+        Returns:
+            reconstructed: [B, C, H, W]
+        """
+        # Interleave channels: LL_c0, LH_c0, HL_c0, HH_c0, LL_c1, …
+        combined = torch.stack([LL, LH, HL, HH], dim=2)   # [B, C, 4, H, W]
+        combined = rearrange(combined, "b c g h w -> b (c g) h w", g=4)  # [B,4C,H,W]
+        return self.recon_conv(combined)  # [B, C, 2H, 2W]
+
+
+# ===========================================================================
+# Frequency-Decoupled Fusion for RGB-IR Detection
+# ===========================================================================
+
+class FreqDecoupledFusion(nn.Module):
+    """Frequency-decoupled fusion for RGB and infrared feature maps.
+
+    Design rationale (see Section 2.2 of the companion paper):
+      - Low-frequency (LL):  carries global illumination, large thermal blobs,
+        and scene-level context → fused with a Mamba-2 SSM that excels at
+        long-range dependency modelling with linear complexity.
+      - High-frequency (LH, HL, HH): carries edges, texture, lane markings,
+        fine-grained details → fused with a lightweight depthwise gated
+        mechanism to preserve spatial locality.
+
+    The decomposition kernels are initialised as 2D Haar wavelets but remain
+    learnable — the detection loss (CIoU + cls + obj) drives each modality
+    towards its own optimal frequency basis over the course of training.
+    """
+
+    def __init__(
+        self,
+        dim: int,
+        d_state: int = 128,
+        d_conv: int = 4,
+        expand: int = 2,
+        headdim: int = 64,
+        ngroups: int = 1,
+    ):
+        super().__init__()
+        self.dim = dim
+
+        # ---- Learnable frequency decomposition (separate per modality) ----
+        # Separate instances allow RGB and IR to learn asymmetric basis
+        # functions — e.g. RGB may emphasise high-frequency texture while
+        # IR emphasises low-frequency thermal profiles.
+        self.decomp_rgb = LearnableWaveletDecomp(dim)
+        self.decomp_ir = LearnableWaveletDecomp(dim)
+
+        # ---- Low-frequency branch: Mamba-2 for global context -----------
+        self.low_proj = nn.Sequential(
+            nn.Conv2d(dim * 2, dim, kernel_size=1, bias=False),
+            nn.GELU(),
+        )
+        self.low_mamba = Mamba2Simple(
+            d_model=dim,
+            d_state=d_state,
+            d_conv=d_conv,
+            expand=expand,
+            headdim=headdim,
+            ngroups=ngroups,
+            use_mem_eff_path=False,
+            use_causal_conv=True,
+        )
+
+        # ---- High-frequency branch: gated fusion for local texture ------
+        high_dim = dim * 3  # concatenated LH + HL + HH
+        self.high_proj = nn.Sequential(
+            nn.Conv2d(high_dim * 2, high_dim, kernel_size=1, bias=False),
+            nn.GELU(),
+        )
+        # Depthwise convolution produces per-channel spatial gating weights
+        self.high_gate = nn.Conv2d(
+            high_dim, high_dim, kernel_size=3, padding=1,
+            groups=high_dim, bias=False,
+        )
+
+        # ---- Reconstruction -------------------------------------------------
+        self.recon = LearnableWaveletRecon(dim)
+
+    def forward(self, x):
+        """Forward pass for frequency-decoupled fusion.
+
+        Args:
+            x: list [rgb_fea, ir_fea], each [B, C, H, W]
+
+        Returns:
+            fused: [B, C, H, W]
+        """
+        rgb_fea = x[0]
+        ir_fea = x[1]
+
+        # ---------- 1. Frequency decomposition (learnable, Haar-init) ----------
+        LL_rgb, LH_rgb, HL_rgb, HH_rgb = self.decomp_rgb(rgb_fea)
+        LL_ir, LH_ir, HL_ir, HH_ir = self.decomp_ir(ir_fea)
+
+        # ---------- 2. Low-frequency fusion: Mamba-2 (global context) ----------
+        # Concatenate RGB + IR low-freq along channel dimension
+        LL_cat = torch.cat([LL_rgb, LL_ir], dim=1)      # [B, 2C, H/2, W/2]
+        LL_proj = self.low_proj(LL_cat)                   # [B,  C, H/2, W/2]
+
+        # Reshape spatial dims into a sequence for the SSM
+        H_LL, W_LL = LL_proj.shape[2], LL_proj.shape[3]
+        LL_seq = rearrange(LL_proj, "b c h w -> b (h w) c")
+        LL_seq = self.low_mamba(LL_seq)                   # [B, H*W, C]
+        LL_fused = rearrange(LL_seq, "b (h w) c -> b c h w",
+                             h=H_LL, w=W_LL)              # [B, C, H/2, W/2]
+
+        # ---------- 3. High-frequency fusion: gated mechanism (local texture) ---
+        # Concatenate the three high-freq bands for each modality
+        high_rgb = torch.cat([LH_rgb, HL_rgb, HH_rgb], dim=1)  # [B, 3C, H/2, W/2]
+        high_ir  = torch.cat([LH_ir,  HL_ir,  HH_ir],  dim=1)  # [B, 3C, H/2, W/2]
+
+        # Gated fusion: learn per-pixel per-channel weights
+        high_cat = torch.cat([high_rgb, high_ir], dim=1)        # [B, 6C, H/2, W/2]
+        high_cat = self.high_proj(high_cat)                      # [B, 3C, H/2, W/2]
+        w = self.high_gate(high_cat).sigmoid()                   # [B, 3C, H/2, W/2]
+        high_fused = w * high_rgb + (1.0 - w) * high_ir          # [B, 3C, H/2, W/2]
+
+        # Split back into individual high-freq bands
+        LH_fused, HL_fused, HH_fused = torch.chunk(high_fused, 3, dim=1)
+
+        # ---------- 4. Reconstruction ------------------------------------------
+        out = self.recon(LL_fused, LH_fused, HL_fused, HH_fused)  # [B, C, H, W]
+        return out

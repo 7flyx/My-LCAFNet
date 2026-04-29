@@ -264,7 +264,7 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
         elif m is GPT:
             c2 = ch[f[0]]
             args = [c2]
-        elif m in [HAFFormer, FusionMamba2]:
+        elif m in [HAFFormer, FusionMamba2, FreqDecoupledFusion]:
             c2 = ch[f[0]]
             args = [c2, *args[1:]]
         elif m is Concat:
