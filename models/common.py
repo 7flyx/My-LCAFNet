@@ -1383,13 +1383,19 @@ class LearnableWaveletRecon(nn.Module):
 class FreqDecoupledFusion(nn.Module):
     """Frequency-decoupled fusion for RGB and infrared feature maps.
 
-    Design rationale (see Section 2.2 of the companion paper):
+    Design rationale:
       - Low-frequency (LL):  carries global illumination, large thermal blobs,
         and scene-level context → fused with a Mamba-2 SSM that excels at
         long-range dependency modelling with linear complexity.
       - High-frequency (LH, HL, HH): carries edges, texture, lane markings,
         fine-grained details → fused with a lightweight depthwise gated
         mechanism to preserve spatial locality.
+      - Cross-frequency interaction (OctConv-inspired):
+          L → H: coarse semantics from LL modulate the high-freq gating
+                 weights, answering "where should we trust fine details?"
+          H → L: fine details from high-freq enrich LL features before
+                 the Mamba scan, so the SSM reasons over textured, not
+                 over-smoothed, representations.
 
     The decomposition kernels are initialised as 2D Haar wavelets but remain
     learnable — the detection loss (CIoU + cls + obj) drives each modality
@@ -1443,6 +1449,27 @@ class FreqDecoupledFusion(nn.Module):
             groups=high_dim, bias=False,
         )
 
+        # ---- Cross-frequency interaction (OctConv-inspired) -------------
+        # L → H: project fused LL semantics to high-freq channel space and
+        #        inject them into the gating path so that coarse object-level
+        #        knowledge guides where to trust edge/texture details.
+        self.l2h_proj = nn.Sequential(
+            nn.Conv2d(dim * 2, high_dim, kernel_size=1, bias=False),
+            nn.GELU(),
+        )
+        # H → L: project high-freq details back to the LL channel space and
+        #        add them as a residual to the low-freq features.  This
+        #        prevents the Mamba SSM from operating on over-smoothed
+        #        features — it now sees structure-enriched representations.
+        self.h2l_proj_rgb = nn.Sequential(
+            nn.Conv2d(high_dim, dim, kernel_size=1, bias=False),
+            nn.GELU(),
+        )
+        self.h2l_proj_ir = nn.Sequential(
+            nn.Conv2d(high_dim, dim, kernel_size=1, bias=False),
+            nn.GELU(),
+        )
+
         # ---- Reconstruction -------------------------------------------------
         self.recon = LearnableWaveletRecon(dim)
 
@@ -1474,7 +1501,31 @@ class FreqDecoupledFusion(nn.Module):
         LL_rgb, LH_rgb, HL_rgb, HH_rgb = self.decomp_rgb(rgb_fea)
         LL_ir, LH_ir, HL_ir, HH_ir = self.decomp_ir(ir_fea)
 
-        # ---------- 2. Low-frequency fusion: Mamba-2 (global context) ----------
+        # ---------- 2. Cross-frequency interaction (OctConv-inspired) ----------
+        # Before the two branches are fused independently, let them exchange
+        # information: coarse semantics → fine gate, fine details → coarse branch.
+
+        # 2a. Concatenate high-freq bands per modality for the interaction
+        high_rgb = torch.cat([LH_rgb, HL_rgb, HH_rgb], dim=1)  # [B, 3C, H/2, W/2]
+        high_ir  = torch.cat([LH_ir,  HL_ir,  HH_ir],  dim=1)  # [B, 3C, H/2, W/2]
+
+        # 2b. H → L: inject fine details into low-freq features.
+        #     High-freq bands carry edges and texture.  Projecting them back
+        #     to the LL channel space and adding them as a residual ensures
+        #     that the Mamba SSM sees structure-enriched (not over-smoothed)
+        #     representations.
+        LL_rgb = LL_rgb + self.h2l_proj_rgb(high_rgb)  # [B, C, H/2, W/2]
+        LL_ir  = LL_ir  + self.h2l_proj_ir(high_ir)    # [B, C, H/2, W/2]
+
+        # 2c. L → H: prepare the guidance signal for the high-freq gate.
+        #     LL captures coarse semantics ("there is a car here").  This
+        #     signal is projected to the high-freq channel count and will be
+        #     added into the gating path so the model knows *where* to trust
+        #     edge/texture information.
+        LL_for_high = torch.cat([LL_rgb, LL_ir], dim=1)  # [B, 2C, H/2, W/2]
+        LL_for_high = self.l2h_proj(LL_for_high)          # [B, 3C, H/2, W/2]
+
+        # ---------- 3. Low-frequency fusion: Mamba-2 (global context) ----------
         # Concatenate RGB + IR low-freq along channel dimension
         LL_cat = torch.cat([LL_rgb, LL_ir], dim=1)      # [B, 2C, H/2, W/2]
         LL_proj = self.low_proj(LL_cat)                   # [B,  C, H/2, W/2]
@@ -1486,21 +1537,22 @@ class FreqDecoupledFusion(nn.Module):
         LL_fused = rearrange(LL_seq, "b (h w) c -> b c h w",
                              h=H_LL, w=W_LL)              # [B, C, H/2, W/2]
 
-        # ---------- 3. High-frequency fusion: gated mechanism (local texture) ---
-        # Concatenate the three high-freq bands for each modality
-        high_rgb = torch.cat([LH_rgb, HL_rgb, HH_rgb], dim=1)  # [B, 3C, H/2, W/2]
-        high_ir  = torch.cat([LH_ir,  HL_ir,  HH_ir],  dim=1)  # [B, 3C, H/2, W/2]
+        # ---------- 4. High-frequency fusion: gated mechanism (local texture) ---
+        # Step 2a already prepared high_rgb / high_ir above; reuse them here.
 
-        # Gated fusion: learn per-pixel per-channel weights
+        # Gated fusion: learn per-pixel per-channel weights.
+        # LL_for_high (L→H) is added here so that coarse semantics modulate
+        # the gating decision at every spatial position.
         high_cat = torch.cat([high_rgb, high_ir], dim=1)        # [B, 6C, H/2, W/2]
         high_cat = self.high_proj(high_cat)                      # [B, 3C, H/2, W/2]
+        high_cat = high_cat + LL_for_high                         # ← L→H injection
         w = self.high_gate(high_cat).sigmoid()                   # [B, 3C, H/2, W/2]
         high_fused = w * high_rgb + (1.0 - w) * high_ir          # [B, 3C, H/2, W/2]
 
         # Split back into individual high-freq bands
         LH_fused, HL_fused, HH_fused = torch.chunk(high_fused, 3, dim=1)
 
-        # ---------- 4. Reconstruction ------------------------------------------
+        # ---------- 5. Reconstruction ------------------------------------------
         out = self.recon(LL_fused, LH_fused, HL_fused, HH_fused)  # [B, C, H, W]
 
         # Crop back to original size if padding was added for odd dimensions
