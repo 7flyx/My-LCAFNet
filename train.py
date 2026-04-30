@@ -97,11 +97,26 @@ def train_rgb_ir(hyp, opt, device, tb_writer=None):
         exclude = ['anchor'] if (opt.cfg or hyp.get('anchors')) and not opt.resume else []  # exclude keys
         state_dict = ckpt['model'].float().state_dict()  # to FP32
         state_dict = intersect_dicts(state_dict, model.state_dict(), exclude=exclude)  # intersect
-        new_state_dict = state_dict
-        for key in list(state_dict.keys()):
-            new_state_dict[key[:6] + str(int(key[6])+10) + key[7:]] = state_dict[key]
-        model.load_state_dict(new_state_dict, strict=False)  # load
-        logger.info('Transferred %g/%g items from %s' % (len(state_dict), len(model.state_dict()), weights))  # report
+        import re
+        # Duplicate backbone weights (layers 0-9) to IR stream (layers 10-19)
+        backbone_keys = list(state_dict.keys())
+        duplicated = 0
+        for key in backbone_keys:
+            match = re.match(r'(model\.)(\d+)(\..*)', key)
+            if match:
+                prefix, idx_str, suffix = match.groups()
+                idx = int(idx_str)
+                if 0 <= idx <= 9:  # backbone layers only
+                    ir_key = f'{prefix}{idx + 10}{suffix}'
+                    if ir_key not in state_dict:
+                        state_dict[ir_key] = state_dict[key]
+                        duplicated += 1
+        model.load_state_dict(state_dict, strict=False)  # load
+        total_model = len(model.state_dict())
+        matched = len(intersect_dicts(state_dict, model.state_dict()))
+        random_init = total_model - matched
+        logger.info(f'Weight loading: {matched}/{total_model} layers transferred from {weights} '
+                    f'(backbone duplicated to IR stream: {duplicated}, randomly initialized: {random_init})')
     else:
         model = Model(opt.cfg, ch=3, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
 
