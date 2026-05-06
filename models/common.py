@@ -1209,7 +1209,7 @@ class Mamba2Simple(nn.Module):
 
 
 class FusionMamba2(nn.Module):
-    def __init__(self, dim, d_state=128, d_conv=4, expand=2, headdim=64, ngroups=1, use_mem_eff_path=False):
+    def __init__(self, dim, d_state=128, d_conv=4, expand=2, headdim=64, ngroups=1, use_mem_eff_path=True):
         super().__init__()
         self.pre = nn.Conv2d(dim * 2, dim, kernel_size=1, stride=1, padding=0, bias=False)
         self.act = nn.GELU()
@@ -1433,7 +1433,7 @@ class FreqDecoupledFusion(nn.Module):
             expand=expand,
             headdim=headdim,
             ngroups=ngroups,
-            use_mem_eff_path=False,
+            use_mem_eff_path=True,
             use_causal_conv=True,
         )
 
@@ -1443,8 +1443,14 @@ class FreqDecoupledFusion(nn.Module):
             nn.Conv2d(high_dim * 2, high_dim, kernel_size=1, bias=False),
             nn.GELU(),
         )
-        # Depthwise convolution produces per-channel spatial gating weights
-        self.high_gate = nn.Conv2d(
+        # Dual independent gates — one per modality — so the model can
+        # retain useful information from *both* RGB and IR at each pixel,
+        # rather than being forced into a convex "pick one" decision.
+        self.gate_rgb = nn.Conv2d(
+            high_dim, high_dim, kernel_size=3, padding=1,
+            groups=high_dim, bias=False,
+        )
+        self.gate_ir = nn.Conv2d(
             high_dim, high_dim, kernel_size=3, padding=1,
             groups=high_dim, bias=False,
         )
@@ -1537,17 +1543,22 @@ class FreqDecoupledFusion(nn.Module):
         LL_fused = rearrange(LL_seq, "b (h w) c -> b c h w",
                              h=H_LL, w=W_LL)              # [B, C, H/2, W/2]
 
-        # ---------- 4. High-frequency fusion: gated mechanism (local texture) ---
+        # ---- 4. High-frequency fusion: gated mechanism (local texture) ---
         # Step 2a already prepared high_rgb / high_ir above; reuse them here.
 
-        # Gated fusion: learn per-pixel per-channel weights.
-        # LL_for_high (L→H) is added here so that coarse semantics modulate
-        # the gating decision at every spatial position.
+        # Gated fusion: learn per-pixel per-channel weights independently
+        # for each modality.  LL_for_high (L→H) is injected here so that
+        # coarse semantics modulate the gating decision at every position.
+        # A std-based scale factor keeps LL_for_high in the same magnitude
+        # range as the high-freq features — without it, LL-dominated IR
+        # features can overwhelm the gating input.
         high_cat = torch.cat([high_rgb, high_ir], dim=1)        # [B, 6C, H/2, W/2]
         high_cat = self.high_proj(high_cat)                      # [B, 3C, H/2, W/2]
-        high_cat = high_cat + LL_for_high                         # ← L→H injection
-        w = self.high_gate(high_cat).sigmoid()                   # [B, 3C, H/2, W/2]
-        high_fused = w * high_rgb + (1.0 - w) * high_ir          # [B, 3C, H/2, W/2]
+        ll_scale = high_cat.detach().std() / LL_for_high.detach().std().clamp(min=1e-5)
+        high_cat = high_cat + LL_for_high * ll_scale             # ← L→H injection (magnitude-aligned)
+        w_rgb = self.gate_rgb(high_cat).sigmoid()                # [B, 3C, H/2, W/2]
+        w_ir  = self.gate_ir(high_cat).sigmoid()                 # [B, 3C, H/2, W/2]
+        high_fused = w_rgb * high_rgb + w_ir * high_ir           # [B, 3C, H/2, W/2]
 
         # Split back into individual high-freq bands
         LH_fused, HL_fused, HH_fused = torch.chunk(high_fused, 3, dim=1)
@@ -1559,4 +1570,8 @@ class FreqDecoupledFusion(nn.Module):
         if pad_h or pad_w:
             out = out[:, :, :H_orig, :W_orig]
 
-        return out
+        # Residual shortcut: the module's default behaviour is "pass through
+        # RGB", then learn the IR-driven delta.  This stabilises early training
+        # — the RGB backbone drives the loss from step 0, while the fusion
+        # branches warm up gradually.
+        return out + rgb_fea[:, :, :H_orig, :W_orig]
