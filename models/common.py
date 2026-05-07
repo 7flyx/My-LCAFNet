@@ -1377,6 +1377,50 @@ class LearnableWaveletRecon(nn.Module):
 
 
 # ===========================================================================
+# ConvNeXt Block — pure-PyTorch global context mixing
+# Replaces Mamba-2 on non-CUDA hardware (e.g. PPU accelerators).
+# 7×7 depthwise conv + channel MLP, O(H·W·C) complexity, no custom kernels.
+# ===========================================================================
+
+class ConvNeXtBlock(nn.Module):
+    """Large-kernel ConvNeXt block for spatial context mixing.
+
+    Uses a 7×7 depthwise convolution for efficient spatial mixing followed
+    by a pointwise channel MLP with LayerNorm and GELU.  The large kernel
+    gives the block a receptive field comparable to a lightweight SSM,
+    without requiring any CUDA-specific primitives.
+
+    Args:
+        dim:       input / output channel count
+        kernel_size: depthwise conv kernel size (default 7)
+        expand:    channel expansion ratio for the MLP (default 2)
+    """
+
+    def __init__(self, dim: int, kernel_size: int = 7, expand: int = 2):
+        super().__init__()
+        self.dwconv = nn.Conv2d(
+            dim, dim,
+            kernel_size=kernel_size,
+            padding=kernel_size // 2,
+            groups=dim,
+        )
+        self.norm = nn.LayerNorm(dim)
+        self.pwconv1 = nn.Linear(dim, dim * expand)
+        self.act = nn.GELU()
+        self.pwconv2 = nn.Linear(dim * expand, dim)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """x: [B, C, H, W]  →  out: [B, C, H, W]"""
+        residual = x
+        x = self.dwconv(x)                     # spatial mixing
+        x = x.permute(0, 2, 3, 1)              # [B, H, W, C]
+        x = self.norm(x)
+        x = self.pwconv2(self.act(self.pwconv1(x)))
+        x = x.permute(0, 3, 1, 2)              # [B, C, H, W]
+        return x + residual
+
+
+# ===========================================================================
 # Frequency-Decoupled Fusion for RGB-IR Detection
 # ===========================================================================
 
@@ -1421,21 +1465,34 @@ class FreqDecoupledFusion(nn.Module):
         self.decomp_rgb = LearnableWaveletDecomp(dim)
         self.decomp_ir = LearnableWaveletDecomp(dim)
 
-        # ---- Low-frequency branch: Mamba-2 for global context -----------
+        # ---- Low-frequency branch: global context mixing -----------
+        # Auto-detect whether Mamba-2 (CUDA/Triton) is usable.  On non-NVIDIA
+        # accelerators (PPU, ROCm, etc.) fall back to a pure-PyTorch ConvNeXt
+        # block that provides comparable large-receptive-field mixing.
         self.low_proj = nn.Sequential(
             nn.Conv2d(dim * 2, dim, kernel_size=1, bias=False),
             nn.GELU(),
         )
-        self.low_mamba = Mamba2Simple(
-            d_model=dim,
-            d_state=d_state,
-            d_conv=d_conv,
-            expand=expand,
-            headdim=headdim,
-            ngroups=ngroups,
-            use_mem_eff_path=True,
-            use_causal_conv=True,
+        _mamba_ok = (
+            mamba_split_conv1d_scan_combined is not None
+            and mamba_chunk_scan_combined is not None
+            and causal_conv1d_fn is not None
+            and torch.cuda.is_available()
         )
+        self.use_mamba = _mamba_ok
+        if _mamba_ok:
+            self.low_ctx = Mamba2Simple(
+                d_model=dim,
+                d_state=d_state,
+                d_conv=d_conv,
+                expand=expand,
+                headdim=headdim,
+                ngroups=ngroups,
+                use_mem_eff_path=True,
+                use_causal_conv=True,
+            )
+        else:
+            self.low_ctx = ConvNeXtBlock(dim, kernel_size=7, expand=expand)
 
         # ---- High-frequency branch: gated fusion for local texture ------
         high_dim = dim * 3  # concatenated LH + HL + HH
@@ -1531,17 +1588,21 @@ class FreqDecoupledFusion(nn.Module):
         LL_for_high = torch.cat([LL_rgb, LL_ir], dim=1)  # [B, 2C, H/2, W/2]
         LL_for_high = self.l2h_proj(LL_for_high)          # [B, 3C, H/2, W/2]
 
-        # ---------- 3. Low-frequency fusion: Mamba-2 (global context) ----------
+        # ---------- 3. Low-frequency fusion (global context) ----------
         # Concatenate RGB + IR low-freq along channel dimension
         LL_cat = torch.cat([LL_rgb, LL_ir], dim=1)      # [B, 2C, H/2, W/2]
         LL_proj = self.low_proj(LL_cat)                   # [B,  C, H/2, W/2]
 
-        # Reshape spatial dims into a sequence for the SSM
-        H_LL, W_LL = LL_proj.shape[2], LL_proj.shape[3]
-        LL_seq = rearrange(LL_proj, "b c h w -> b (h w) c")
-        LL_seq = self.low_mamba(LL_seq)                   # [B, H*W, C]
-        LL_fused = rearrange(LL_seq, "b (h w) c -> b c h w",
-                             h=H_LL, w=W_LL)              # [B, C, H/2, W/2]
+        # Mamba-2 path: flatten to sequence → SSM scan → reshape back.
+        # ConvNeXt path:  direct 2D large-kernel convolution, no reshape.
+        if self.use_mamba:
+            H_LL, W_LL = LL_proj.shape[2], LL_proj.shape[3]
+            LL_seq = rearrange(LL_proj, "b c h w -> b (h w) c")
+            LL_seq = self.low_ctx(LL_seq)                 # [B, H*W, C]
+            LL_fused = rearrange(LL_seq, "b (h w) c -> b c h w",
+                                 h=H_LL, w=W_LL)          # [B, C, H/2, W/2]
+        else:
+            LL_fused = self.low_ctx(LL_proj)              # [B, C, H/2, W/2] — ConvNeXt
 
         # ---- 4. High-frequency fusion: gated mechanism (local texture) ---
         # Step 2a already prepared high_rgb / high_ir above; reuse them here.
