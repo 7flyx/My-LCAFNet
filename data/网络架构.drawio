@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="LCAFNet HAF-q and IR Repair-MoE" id="OgnkLT5r3H4Jix8_a7VI">
-    <mxGraphModel dx="85343" dy="82001" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="104748" dy="95753" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -143,6 +143,147 @@
         <mxCell id="tSNpMnqNJ5aayLnkIuR8-69" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-51" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-53" />
         <mxCell id="tSNpMnqNJ5aayLnkIuR8-70" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-52" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-53" />
         <mxCell id="tSNpMnqNJ5aayLnkIuR8-71" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-53" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#A16207;" target="tSNpMnqNJ5aayLnkIuR8-54" />
+        <mxCell id="2ZU_iB-drDultNdad9n9-2" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#1F2937;" value="LCAFNet / HAF-q / IR Repair-MoE 网络架构（中文）" vertex="1">
+          <mxGeometry height="40" width="1000" x="1790" y="-2960" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-3" parent="1" style="swimlane;html=1;rounded=1;fillColor=#F8FAFC;strokeColor=#64748B;fontStyle=1;fontSize=18;startSize=34;" value="部署期：仅使用红外图像（IR-only）" vertex="1">
+          <mxGeometry height="510" width="2140" x="1200" y="-2890" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontSize=16;" value="红外图像 IR" vertex="1">
+          <mxGeometry height="65" width="135" x="1240" y="-2795" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;fontSize=15;" value="IR-only 包装器\n复制为 (IR, IR)" vertex="1">
+          <mxGeometry height="65" width="165" x="1425" y="-2795" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#2563EB;fontSize=15;" value="双流骨干 A\nYOLOv5 Backbone\nP2/P3/P4/P5" vertex="1">
+          <mxGeometry height="100" width="180" x="1650" y="-2860" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE7F3;strokeColor=#DB2777;fontSize=15;" value="双流骨干 B\nYOLOv5 Backbone\nP2/P3/P4/P5" vertex="1">
+          <mxGeometry height="100" width="180" x="1650" y="-2695" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;fontSize=14;" value="4 个 HAF 融合位置\nP2/4、P3/8、P4/16、P5/32\n每个尺度均替换一个 HAFFormer" vertex="1">
+          <mxGeometry height="90" width="235" x="1905" y="-2785" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-9" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2E8F0;strokeColor=#475569;fontSize=14;" value="选择融合适配器" vertex="1">
+          <mxGeometry height="75" width="135" x="2200" y="-2780" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#4F46E5;fontSize=14;" value="HAF-q（可靠性门控）\n跨模态注意力 + 残差\n从原 HAF 融合门 w 得 q\nq×支路A，(1.5-q)×支路B" vertex="1">
+          <mxGeometry height="105" width="265" x="2400" y="-2860" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontSize=14;" value="IR Repair-MoE（特征修复）\n输入固定为 (IR, IR)\nHAF 基础特征 base\nsmooth=AvgPool(base)\nhigh=base-smooth" vertex="1">
+          <mxGeometry height="115" width="265" x="2400" y="-2680" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;fontSize=14;" value="4 个修复专家\n恒等：base\n去噪：smooth\n细节：base+high\n保守：0.5base+0.5smooth" vertex="1">
+          <mxGeometry height="140" width="205" x="2725" y="-2700" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontSize=14;" value="空间路由器\nConv1×1 - SiLU - Conv1×1\nSoftmax(4 个专家)\n输入：[base, |high|]" vertex="1">
+          <mxGeometry height="105" width="205" x="2725" y="-2860" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontSize=14;" value="每个空间位置\n按 route 加权求和\n得到修复后特征" vertex="1">
+          <mxGeometry height="80" width="175" x="2990" y="-2755" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#CA8A04;fontSize=15;" value="YOLOv5 PAN/FPN Neck\n多尺度特征聚合" vertex="1">
+          <mxGeometry height="58" width="210" x="2410" y="-2495" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#CA8A04;fontSize=15;" value="检测头 Detect\nP2 / P3 / P4 / P5" vertex="1">
+          <mxGeometry height="58" width="180" x="2680" y="-2495" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontSize=15;" value="IR-only 检测结果\n边界框、类别、置信度" vertex="1">
+          <mxGeometry height="58" width="200" x="2920" y="-2495" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-18" parent="1" style="swimlane;html=1;rounded=1;fillColor=#FFFBEB;strokeColor=#A16207;fontStyle=1;fontSize=18;startSize=34;" value="训练期：IR Repair-MoE 的教师监督（虚线为只在训练时存在的教师路径）" vertex="1">
+          <mxGeometry height="560" width="2140" x="1200" y="-2340" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-19" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#2563EB;fontSize=15;" value="干净配对 RGB + IR" vertex="1">
+          <mxGeometry height="60" width="175" x="1240" y="-2215" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-20" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#4F46E5;fontSize=14;" value="冻结的 LCAFNet 教师\n输入：干净 (RGB, IR)\n提取检测输出与 HAF 特征" vertex="1">
+          <mxGeometry height="90" width="220" x="1480" y="-2230" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontSize=14;" value="合成退化\nRGB / IR / 两者\n模糊、低对比度、噪声、\n热斑、随机丢失" vertex="1">
+          <mxGeometry height="100" width="195" x="1240" y="-2025" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-22" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontSize=14;" value="学生：LCAFNet + IR Repair-MoE\n输入：退化后 (IR, IR)\n输出：修复特征、路由图、检测结果" vertex="1">
+          <mxGeometry height="100" width="245" x="1510" y="-2025" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-23" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;fontSize=14;" value="训练损失\nLdet：目标检测损失\nLKD：质量加权检测蒸馏\nLfeat：对齐干净教师 HAF 特征\nLrouter：由干净/退化特征差监督路由" vertex="1">
+          <mxGeometry height="150" width="300" x="1860" y="-2155" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#CA8A04;fontStyle=1;fontSize=15;" value="总损失\nL = Ldet + λKD LKD\n+ λfeat Lfeat + λrouter Lrouter" vertex="1">
+          <mxGeometry height="90" width="260" x="2235" y="-2125" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#A16207;fontSize=16;" value="部署时：丢弃教师与 RGB\n只保留 Student(IR, IR)" vertex="1">
+          <mxGeometry height="70" width="315" x="2600" y="-2115" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-26" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-4" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#475569;" target="2ZU_iB-drDultNdad9n9-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-27" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-5" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#2563EB;" target="2ZU_iB-drDultNdad9n9-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-28" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-5" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#DB2777;" target="2ZU_iB-drDultNdad9n9-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-29" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-6" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#2563EB;" target="2ZU_iB-drDultNdad9n9-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-30" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-7" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#DB2777;" target="2ZU_iB-drDultNdad9n9-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-31" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-8" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#475569;" target="2ZU_iB-drDultNdad9n9-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-32" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-9" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="2ZU_iB-drDultNdad9n9-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-33" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-9" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="2ZU_iB-drDultNdad9n9-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-34" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-11" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="2ZU_iB-drDultNdad9n9-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-35" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-11" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="2ZU_iB-drDultNdad9n9-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-36" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-12" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="2ZU_iB-drDultNdad9n9-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-37" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-13" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="2ZU_iB-drDultNdad9n9-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-38" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-10" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="2ZU_iB-drDultNdad9n9-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-39" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-14" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="2ZU_iB-drDultNdad9n9-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-40" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-15" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="2ZU_iB-drDultNdad9n9-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-41" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-16" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="2ZU_iB-drDultNdad9n9-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-42" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-19" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="2ZU_iB-drDultNdad9n9-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-43" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-19" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#DC2626;" target="2ZU_iB-drDultNdad9n9-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-44" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-21" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="2ZU_iB-drDultNdad9n9-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-45" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-22" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="2ZU_iB-drDultNdad9n9-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-46" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-20" style="endArrow=block;html=1;dashed=1;strokeWidth=2;strokeColor=#9333EA;" target="2ZU_iB-drDultNdad9n9-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-47" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-23" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="2ZU_iB-drDultNdad9n9-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2ZU_iB-drDultNdad9n9-48" edge="1" parent="1" source="2ZU_iB-drDultNdad9n9-24" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#A16207;" target="2ZU_iB-drDultNdad9n9-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
