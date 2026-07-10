@@ -1,0 +1,149 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="LCAFNet HAF-q and IR Repair-MoE" id="OgnkLT5r3H4Jix8_a7VI">
+    <mxGraphModel dx="5451" dy="5894" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-1" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#1F2937;" value="LCAFNet, HAF-q, and IR Repair-MoE (FLIR RGB-T Detection)" vertex="1">
+          <mxGeometry height="40" width="1040" x="700" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-2" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontColor=#475569;" value="Solid arrows: deployment / IR-only inference. Dashed arrows: training-only teacher supervision." vertex="1">
+          <mxGeometry height="25" width="800" x="820" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-3" parent="1" style="swimlane;html=1;rounded=1;fillColor=#F8FAFC;strokeColor=#64748B;fontStyle=1;fontSize=18;horizontal=1;startSize=34;" value="Deployment: IR-only detector" vertex="1">
+          <mxGeometry height="600" width="2300" x="175" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-4" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontSize=16;" value="IR image\n(thermal)" vertex="1">
+          <mxGeometry height="65" width="135" x="35" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-5" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#D97706;fontSize=15;" value="IR-only wrapper\nfeeds (IR, IR)" vertex="1">
+          <mxGeometry height="65" width="155" x="215" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-6" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#2563EB;fontSize=15;" value="Stream A\nYOLOv5 backbone\nP2 / P3 / P4 / P5" vertex="1">
+          <mxGeometry height="105" width="170" x="420" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-7" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE7F3;strokeColor=#DB2777;fontSize=15;" value="Stream B\nYOLOv5 backbone\nP2 / P3 / P4 / P5" vertex="1">
+          <mxGeometry height="105" width="170" x="420" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-8" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#64748B;fontSize=14;" value="Four feature scales: P2/4, P3/8, P4/16, P5/32\nEach scale has one HAFFormer-derived fusion adapter" vertex="1">
+          <mxGeometry height="80" width="235" x="635" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-9" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rhombus;whiteSpace=wrap;html=1;fillColor=#E2E8F0;strokeColor=#475569;fontSize=14;" value="Choose one fusion adapter\nat all 4 scales" vertex="1">
+          <mxGeometry height="75" width="145" x="915" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-10" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#4F46E5;fontStyle=1;fontSize=16;" value="HAF-q QualGate\nRGB-T reliability modulation" vertex="1">
+          <mxGeometry height="55" width="250" x="1110" y="55" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-11" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontStyle=1;fontSize=16;" value="IR Repair-MoE\nIR-only feature repair" vertex="1">
+          <mxGeometry height="55" width="250" x="1110" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-12" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;fontSize=14;" value="Cross-attention\nRGB &lt;- IR; IR &lt;- RGB\n+ residual paths" vertex="1">
+          <mxGeometry height="85" width="190" x="1405" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-13" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;fontSize=14;" value="Original HAF gate w\nq = mean(w)\nRGB guide = q * RGB\nIR guide = (1.5-q) * IR" vertex="1">
+          <mxGeometry height="85" width="210" x="1635" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-14" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#4F46E5;fontSize=14;" value="q-gated fused feature" vertex="1">
+          <mxGeometry height="48" width="160" x="1885" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-15" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;fontSize=14;" value="HAF base feature\nfrom (IR, IR)\nsmooth = AvgPool(base)\nhigh = base - smooth" vertex="1">
+          <mxGeometry height="100" width="205" x="1405" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-16" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;fontSize=14;" value="Four repair experts\n1 identity: base\n2 denoise: smooth\n3 detail: base + high\n4 conservative: .5 base + .5 smooth" vertex="1">
+          <mxGeometry height="130" width="235" x="1650" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-17" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontSize=14;" value="Spatial router\nConv1x1 - SiLU - Conv1x1 - Softmax\ninput: [base, |high|]\nroute map: 4 x H x W" vertex="1">
+          <mxGeometry height="100" width="210" x="1925" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-18" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontSize=14;" value="Spatial weighted sum\nrepaired fused feature" vertex="1">
+          <mxGeometry height="60" width="110" x="2175" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-19" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#CA8A04;fontSize=15;" value="YOLOv5 PAN/FPN neck\nmultiscale aggregation" vertex="1">
+          <mxGeometry height="65" width="220" x="1050" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-20" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#CA8A04;fontSize=15;" value="Detect head\nP2, P3, P4, P5" vertex="1">
+          <mxGeometry height="65" width="180" x="1330" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-21" parent="tSNpMnqNJ5aayLnkIuR8-3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontSize=15;" value="IR-only detections\nboxes + classes + scores" vertex="1">
+          <mxGeometry height="65" width="190" x="1570" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-22" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-4" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#475569;" target="tSNpMnqNJ5aayLnkIuR8-5" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-23" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-5" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#2563EB;" target="tSNpMnqNJ5aayLnkIuR8-6" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-24" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-5" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#DB2777;" target="tSNpMnqNJ5aayLnkIuR8-7" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-25" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-6" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#2563EB;" target="tSNpMnqNJ5aayLnkIuR8-8" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-26" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-7" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#DB2777;" target="tSNpMnqNJ5aayLnkIuR8-8" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-27" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-8" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#475569;" target="tSNpMnqNJ5aayLnkIuR8-9" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-28" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-9" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="tSNpMnqNJ5aayLnkIuR8-10" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-29" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-9" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-11" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-30" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-10" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="tSNpMnqNJ5aayLnkIuR8-12" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-31" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-12" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="tSNpMnqNJ5aayLnkIuR8-13" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-32" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-13" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="tSNpMnqNJ5aayLnkIuR8-14" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-33" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-11" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-15" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-34" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-15" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-16" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-35" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-15" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-17" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-36" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-16" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-18" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-37" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-17" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-18" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-38" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-14" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="tSNpMnqNJ5aayLnkIuR8-19" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-39" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-18" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="tSNpMnqNJ5aayLnkIuR8-19" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-40" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-19" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="tSNpMnqNJ5aayLnkIuR8-20" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-41" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-3" source="tSNpMnqNJ5aayLnkIuR8-20" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="tSNpMnqNJ5aayLnkIuR8-21" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-42" parent="1" style="swimlane;html=1;rounded=1;fillColor=#FFFBEB;strokeColor=#A16207;fontStyle=1;fontSize=18;horizontal=1;startSize=34;" value="Training-only supervision for IR Repair-MoE" vertex="1">
+          <mxGeometry height="590" width="2300" x="175" y="1005" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-43" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#2563EB;fontSize=15;" value="Clean paired RGB + IR" vertex="1">
+          <mxGeometry height="60" width="175" x="40" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-44" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0E7FF;strokeColor=#4F46E5;fontSize=15;" value="Frozen LCAFNet teacher\ninput: clean (RGB, IR)\nHAF feature hooks" vertex="1">
+          <mxGeometry height="90" width="210" x="270" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-45" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;fontSize=14;" value="Clean teacher HAF features\n+ teacher detections" vertex="1">
+          <mxGeometry height="70" width="195" x="535" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-46" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontSize=14;" value="Synthetic degradation\nRGB / IR / both\nblur, low contrast, noise, hotspot, dropout" vertex="1">
+          <mxGeometry height="85" width="210" x="40" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-47" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontSize=15;" value="Student: LCAFNet +\nIR Repair-MoE at 4 HAF scales\ninput: degraded (IR, IR)" vertex="1">
+          <mxGeometry height="90" width="235" x="310" y="295" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-48" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#16A34A;fontSize=14;" value="Student repaired features\nroute maps\nIR-only detections" vertex="1">
+          <mxGeometry height="70" width="195" x="600" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-49" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontSize=14;" value="Detection loss\nwith ground-truth boxes" vertex="1">
+          <mxGeometry height="60" width="175" x="875" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-50" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;fontSize=14;" value="Quality-weighted KD\nteacher detections -&gt; student" vertex="1">
+          <mxGeometry height="60" width="175" x="875" y="335" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-51" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;fontSize=14;" value="Clean feature loss\nSmooth L1(student feature,\nclean teacher feature)" vertex="1">
+          <mxGeometry height="80" width="205" x="1110" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-52" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#9333EA;fontSize=14;" value="Router supervision\nclean/degraded teacher feature\ndifference -&gt; repair target\n(identity vs repair/safe)" vertex="1">
+          <mxGeometry height="95" width="205" x="1110" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-53" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE68A;strokeColor=#CA8A04;fontStyle=1;fontSize=15;" value="Total training loss\nLdet + lambdaKD LKD\n+ lambdaFeat Lfeat + lambdaRouter Lrouter" vertex="1">
+          <mxGeometry height="90" width="255" x="1390" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-54" parent="tSNpMnqNJ5aayLnkIuR8-42" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#A16207;fontSize=15;" value="After training: discard teacher and RGB.\nDeploy only Student(IR, IR) shown above." vertex="1">
+          <mxGeometry height="70" width="350" x="1715" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-55" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-43" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="tSNpMnqNJ5aayLnkIuR8-44" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-56" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-44" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#4F46E5;" target="tSNpMnqNJ5aayLnkIuR8-45" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-57" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-43" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#DC2626;" target="tSNpMnqNJ5aayLnkIuR8-46" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-58" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-46" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-47" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-59" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-47" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#16A34A;" target="tSNpMnqNJ5aayLnkIuR8-48" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-60" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-48" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="tSNpMnqNJ5aayLnkIuR8-49" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-61" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-44" style="endArrow=block;html=1;dashed=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-50" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-62" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-48" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-50" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-63" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-45" style="endArrow=block;html=1;dashed=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-51" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-64" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-48" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-51" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-65" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-45" style="endArrow=block;html=1;dashed=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-52" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-66" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-48" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-52" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-67" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-49" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#CA8A04;" target="tSNpMnqNJ5aayLnkIuR8-53" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-68" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-50" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-53" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-69" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-51" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-53" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-70" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-52" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9333EA;" target="tSNpMnqNJ5aayLnkIuR8-53" />
+        <mxCell id="tSNpMnqNJ5aayLnkIuR8-71" edge="1" parent="tSNpMnqNJ5aayLnkIuR8-42" source="tSNpMnqNJ5aayLnkIuR8-53" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#A16207;" target="tSNpMnqNJ5aayLnkIuR8-54" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
