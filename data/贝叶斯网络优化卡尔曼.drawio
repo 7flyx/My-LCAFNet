@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net">
+<mxfile host="app.diagrams.net" pages="2">
   <diagram name="Bayesian KalmanNet 网络架构" id="DIRcEkcVV3q_uI4KW9p4">
-    <mxGraphModel dx="1141" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1774" dy="1081" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -221,6 +221,119 @@
             </Array>
             <mxPoint x="1580" y="1120" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="QwKA0n1KE8-FulVZHYrf-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Text" vertex="1">
+          <mxGeometry height="30" width="60" x="1010" y="960" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="Yp9INwiToVZ0THFmfLue" name="第 2 页">
+    <mxGraphModel dx="956" dy="649" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-3" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="94.45" width="85" x="70" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-4" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="84.45" width="76" x="411" y="106.67" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-5" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="94.45" width="85" x="340" y="132.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-6" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;&lt;span&gt;&lt;b style=&quot;color: rgb(255, 51, 51);&quot;&gt;regularization&lt;br&gt;&lt;/b&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));&quot;&gt;【B，L=2，T】&lt;br&gt;轨迹数、p的数量、总的时间步&lt;/span&gt;&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="140" x="42.5" y="234.45" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="&lt;h1&gt;Trainer内部设计&lt;/h1&gt;" vertex="1">
+          <mxGeometry height="70" width="200" x="20" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-11" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="is BNN" vertex="1">
+          <mxGeometry height="30" width="60" x="50" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="......." vertex="1">
+          <mxGeometry height="30" width="50" x="465" y="106.67" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-16" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="66.67" width="60" x="495" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-17" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;p style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;span style=&quot;font-style: italic; color: rgb(255, 51, 51);&quot;&gt;x_hat_temp&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;[i, k, t, j] = &lt;/span&gt;&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;color: light-dark(rgb(8, 8, 8), rgb(230, 230, 230)); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;span style=&quot;font-size: 10px; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); white-space: normal; color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;第&lt;/span&gt;&lt;span style=&quot;font-size: 10px; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); white-space: normal; color: rgb(140, 140, 140); font-style: italic;&quot;&gt; i &lt;/span&gt;&lt;span style=&quot;font-size: 10px; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); white-space: normal; color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;条轨迹、&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;color: light-dark(rgb(8, 8, 8), rgb(230, 230, 230)); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;第&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt; k&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;个状态分量、&lt;/span&gt;&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;color: light-dark(rgb(8, 8, 8), rgb(230, 230, 230)); font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;第&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt; t &lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;个时刻、&lt;/span&gt;&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(8, 8, 8), rgb(230, 230, 230)); font-size: 10px;&quot;&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;第&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt; j &lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;span style=&quot;color: light-dark(rgb(140, 140, 140), rgb(117, 117, 117));&quot;&gt;次随机前向传播的&lt;/span&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;状态估&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;font-size: 9.8pt; color: rgb(255, 0, 0);&quot;&gt;计。&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="225" x="487" y="152.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-20" edge="1" parent="1" source="mugb4C7OIwAR_cT8KM-D-5" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mugb4C7OIwAR_cT8KM-D-16" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="475" y="232.22" as="sourcePoint" />
+            <mxPoint x="525" y="182.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="共B条轨迹" vertex="1">
+          <mxGeometry height="30" width="80" x="356" y="92.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-25" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="382" y="217.22" as="sourcePoint" />
+            <mxPoint x="382" y="177.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-26" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="mugb4C7OIwAR_cT8KM-D-5" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="385" y="222.22" as="sourcePoint" />
+            <mxPoint x="425" y="212.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-27" edge="1" parent="1" source="mugb4C7OIwAR_cT8KM-D-5" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="335" y="212.22" as="sourcePoint" />
+            <mxPoint x="385" y="222.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="[n, T, J]&amp;nbsp;&lt;br&gt;n个维度、T个时间步、J个随机网络" vertex="1">
+          <mxGeometry height="40" width="210" x="277" y="226.67" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-29" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="84.45" width="76" x="131" y="426.67" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-30" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="94.45" width="85" x="60" y="452.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-31" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="......." vertex="1">
+          <mxGeometry height="30" width="50" x="185" y="426.67" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-32" edge="1" parent="1" source="mugb4C7OIwAR_cT8KM-D-30" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="195" y="552.22" as="sourcePoint" />
+            <mxPoint x="245" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-33" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="共B条轨迹" vertex="1">
+          <mxGeometry height="30" width="80" x="76" y="412.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-34" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="102" y="537.22" as="sourcePoint" />
+            <mxPoint x="102" y="497.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-35" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="mugb4C7OIwAR_cT8KM-D-30" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="105" y="542.22" as="sourcePoint" />
+            <mxPoint x="145" y="532.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-36" edge="1" parent="1" source="mugb4C7OIwAR_cT8KM-D-30" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="55" y="532.22" as="sourcePoint" />
+            <mxPoint x="105" y="542.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-37" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="66.67" width="60" x="217" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-38" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;regularization_temp&lt;br&gt;&lt;div style=&quot;color: rgb(8, 8, 8);&quot;&gt;&lt;pre style=&quot;font-family:&#39;Menlo-Regular&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;用于保存每次&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;JetBrains Mono&#39;,monospace;&quot;&gt; MC &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;运行产生的正则项。 【&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;JetBrains Mono&#39;,monospace;&quot;&gt;B&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;，&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;JetBrains Mono&#39;,monospace;&quot;&gt;L&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;，&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;JetBrains Mono&#39;,monospace;&quot;&gt;T&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;，&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;JetBrains Mono&#39;,monospace;&quot;&gt;J&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;】&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="37" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-39" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="[n, T, J]&amp;nbsp;&lt;br&gt;n个维度、T个时间步、J个随机网络" vertex="1">
+          <mxGeometry height="40" width="210" x="11" y="540" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
