@@ -229,7 +229,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="Yp9INwiToVZ0THFmfLue" name="第 2 页">
-    <mxGraphModel dx="2481" dy="1123" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2039" dy="823" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -403,7 +403,7 @@
         </mxCell>
         <UserObject label="&lt;div style=&quot;background-color:#ffffff;color:#080808&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# [&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;概率&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;] &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;沿最后的&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; MC &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;维求均值，近似后验预测期望&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; E[x_hat]&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;，作为 最终状态估计。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#000000;&quot;&gt;x_hat&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;] = torch.mean(&lt;span style=&quot;color:#000000;&quot;&gt;x_hat_temp&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;].clone(), &lt;span style=&quot;color:#660099;&quot;&gt;dim&lt;/span&gt;=-&lt;span style=&quot;color:#1750eb;&quot;&gt;1&lt;/span&gt;)&lt;/pre&gt;&lt;/div&gt;" link="&lt;div style=&quot;background-color:#ffffff;color:#080808&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# [&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;概率&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;] &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;沿最后的&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; MC &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;维求均值，近似后验预测期望&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; E[x_hat]&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;，作为 最终状态估计。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#000000;&quot;&gt;x_hat&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;] = torch.mean(&lt;span style=&quot;color:#000000;&quot;&gt;x_hat_temp&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;].clone(), &lt;span style=&quot;color:#660099;&quot;&gt;dim&lt;/span&gt;=-&lt;span style=&quot;color:#1750eb;&quot;&gt;1&lt;/span&gt;)&lt;/pre&gt;&lt;/div&gt;" id="mugb4C7OIwAR_cT8KM-D-56">
           <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
-            <mxGeometry height="80" width="560" x="1110" y="940" as="geometry" />
+            <mxGeometry height="80" width="560" x="1301" y="933.34" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="mugb4C7OIwAR_cT8KM-D-57" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;strokeWidth=5;" value="">
@@ -505,9 +505,6 @@
         <mxCell id="mugb4C7OIwAR_cT8KM-D-83" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="第 j 个MC 随机网络" vertex="1">
           <mxGeometry height="30" width="130" x="1270" y="860" as="geometry" />
         </mxCell>
-        <mxCell id="mugb4C7OIwAR_cT8KM-D-85" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="每个正方体是一条轨迹。正方体的每一层就是MC维度，&lt;div&gt;换句话说 就是 第i条轨迹的 所有状态分量、所有时间步上，一共J=20次随机网络的预测值，都在这最顶层了&lt;/div&gt;" vertex="1">
-          <mxGeometry height="40" width="590" x="1000" y="1010" as="geometry" />
-        </mxCell>
         <mxCell id="mugb4C7OIwAR_cT8KM-D-86" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;p style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;span style=&quot;font-style: italic; color: rgb(255, 51, 51);&quot;&gt;x_hat_temp&lt;/span&gt;&lt;span style=&quot;font-style: italic; color: rgb(255, 51, 51);&quot;&gt;&lt;font color=&quot;#8c8c8c&quot;&gt; = &lt;/font&gt;&lt;/span&gt;&lt;/font&gt;&lt;font style=&quot;font-family: Menlo-Regular, monospace; font-style: italic; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); white-space: normal; font-size: 10px;&quot;&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;状态估&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;font-family: Menlo-Regular, monospace; font-style: italic; background-color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18)); white-space: normal; font-size: 9.8pt; color: rgb(255, 0, 0);&quot;&gt;计。&lt;/span&gt;&lt;/p&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="50" width="140" x="1360" y="890" as="geometry" />
         </mxCell>
@@ -587,6 +584,158 @@
         <mxCell id="mugb4C7OIwAR_cT8KM-D-135" parent="1" style="html=1;whiteSpace=wrap;shape=isoCube2;backgroundOutline=1;isoAngle=15;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" value="" vertex="1">
           <mxGeometry height="40" width="10" x="1420" y="788.34" as="geometry" />
         </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-137" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="2120" y="780.0100000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-138" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#d5e8d4;strokeColor=#82b366;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="2130" y="780.0100000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-139" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="2140" y="780.0100000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-140" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#d5e8d4;strokeColor=#82b366;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="2150" y="780.0100000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-141" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="2160" y="780.0100000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-142" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="2120" y="850.0100000000001" as="sourcePoint" />
+            <mxPoint x="2170" y="850.0100000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-143" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="2172" y="852.2300000000001" as="sourcePoint" />
+            <mxPoint x="2170" y="780.0100000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-144" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" x="-0.0013" as="geometry">
+            <Array as="points" />
+            <mxPoint x="2170" y="850.0100000000001" as="sourcePoint" />
+            <mxPoint x="2190" y="870.0100000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-145" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="&lt;b style=&quot;color: light-dark(rgb(231, 13, 13), rgb(237, 237, 237));&quot;&gt;T&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="30" x="2140" y="794.4400000000003" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-146" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="B" vertex="1">
+          <mxGeometry height="30" width="30" x="2140" y="844.4400000000003" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-147" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="n" vertex="1">
+          <mxGeometry height="30" width="30" x="2170" y="836.6600000000003" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-148" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;# 同理BKN的方差也一样&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;【&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;B&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;，&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;n&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;，&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;T&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;】&lt;br&gt;&lt;/span&gt;&lt;b style=&quot;color: light-dark(rgb(240, 25, 25), rgb(237, 237, 237));&quot;&gt;cov_hat_bnn&lt;/b&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(8, 8, 8), rgb(230, 230, 230));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;# &lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: Menlo-Regular, monospace;&quot;&gt;最终状态&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="190" x="2060" y="874.44" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;div style=&quot;background-color:#ffffff;color:#080808&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# [&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;概率&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;] &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;沿&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; MC &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;维求样本方差。&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;torch.var &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;默认采用&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; Bessel &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;修正，分母是&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; J-1&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# [&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;易错&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;] &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;这里逐状态分量计算方差，只得到完整协方差矩阵的对角线，不含状态间非对角协方差。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;预测越分散，方差越大；预测越一致，方差越小。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#000000;&quot;&gt;cov_hat_bnn&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;] = torch.var(&lt;span style=&quot;color:#000000;&quot;&gt;x_hat_temp&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;].clone(), &lt;span style=&quot;color:#660099;&quot;&gt;dim&lt;/span&gt;=-&lt;span style=&quot;color:#1750eb;&quot;&gt;1&lt;/span&gt;)&lt;/pre&gt;&lt;/div&gt;" link="&lt;div style=&quot;background-color:#ffffff;color:#080808&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# [&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;概率&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;] &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;沿&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; MC &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;维求样本方差。&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;torch.var &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;默认采用&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; Bessel &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;修正，分母是&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt; J-1&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# [&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;易错&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;] &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;这里逐状态分量计算方差，只得到完整协方差矩阵的对角线，不含状态间非对角协方差。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;预测越分散，方差越大；预测越一致，方差越小。&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#000000;&quot;&gt;cov_hat_bnn&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;] = torch.var(&lt;span style=&quot;color:#000000;&quot;&gt;x_hat_temp&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;].clone(), &lt;span style=&quot;color:#660099;&quot;&gt;dim&lt;/span&gt;=-&lt;span style=&quot;color:#1750eb;&quot;&gt;1&lt;/span&gt;)&lt;/pre&gt;&lt;/div&gt;" id="mugb4C7OIwAR_cT8KM-D-149">
+          <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+            <mxGeometry height="110" width="560" x="1855" y="918.34" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-150" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="2130" y="649.45" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-151" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;" value="" vertex="1">
+          <mxGeometry height="30" width="10" x="2140" y="675.7800000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-152" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="2150" y="697.7800000000001" as="sourcePoint" />
+            <mxPoint x="2200" y="697.7800000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-153" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="第i条轨迹" vertex="1">
+          <mxGeometry height="30" width="70" x="2100" y="731.6700000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-154" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="第 n个状态分量，&lt;br&gt;在第 t个时间步的 最终方值" vertex="1">
+          <mxGeometry height="40" width="170" x="2195" y="675.7800000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-155" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="84.45" width="76" x="1270" y="1106.67" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-156" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="94.45" width="85" x="1199" y="1132.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-157" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="......." vertex="1">
+          <mxGeometry height="30" width="50" x="1324" y="1106.67" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-158" edge="1" parent="1" source="mugb4C7OIwAR_cT8KM-D-156" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1334" y="1232.22" as="sourcePoint" />
+            <mxPoint x="1384" y="1070" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-159" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="共 batch_size. 条轨迹" vertex="1">
+          <mxGeometry height="30" width="140" x="1185" y="1092.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-160" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1241" y="1217.22" as="sourcePoint" />
+            <mxPoint x="1241" y="1177.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-161" edge="1" parent="1" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="mugb4C7OIwAR_cT8KM-D-156" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1244" y="1222.22" as="sourcePoint" />
+            <mxPoint x="1284" y="1212.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-162" edge="1" parent="1" source="mugb4C7OIwAR_cT8KM-D-156" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1194" y="1212.22" as="sourcePoint" />
+            <mxPoint x="1244" y="1222.22" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-163" parent="1" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/database_cube.svg;" value="" vertex="1">
+          <mxGeometry height="66.67" width="60" x="1356" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-164" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;&lt;span style=&quot;color: rgb(255, 0, 0);&quot;&gt;regularization_temp&lt;br&gt;&lt;div style=&quot;color: rgb(8, 8, 8);&quot;&gt;&lt;pre style=&quot;font-family:&#39;Menlo-Regular&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;用于保存每次&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt; MC &lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;运行产生的正则项。 【&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;B&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;，&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;L&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;=2，&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;T&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;，&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic; font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace;&quot;&gt;J&lt;/span&gt;&lt;span style=&quot;color: rgb(140, 140, 140); font-style: italic;&quot;&gt;】&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="1176" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-166" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="L=2个失活概率p" vertex="1">
+          <mxGeometry height="30" width="110" x="1131" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-167" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="T个时间步" vertex="1">
+          <mxGeometry height="30" width="80" x="1246" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-168" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="第 j 个MC 随机网络" vertex="1">
+          <mxGeometry height="30" width="130" x="1230" y="1178" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-169" parent="1" style="html=1;whiteSpace=wrap;shape=isoCube2;backgroundOutline=1;isoAngle=15;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" value="" vertex="1">
+          <mxGeometry height="40" width="10" x="1381" y="1092.22" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-170" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="1600" y="1088" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-171" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#d5e8d4;strokeColor=#82b366;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="1610" y="1088" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-172" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="1620" y="1088" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-173" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;direction=west;fillColor=#d5e8d4;strokeColor=#82b366;" value="" vertex="1">
+          <mxGeometry height="90" width="30" x="1630" y="1088" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-174" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;pre style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;&lt;span&gt;&lt;b style=&quot;color: rgb(255, 51, 51);&quot;&gt;regularization&lt;br&gt;&lt;/b&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));&quot;&gt;【B，L=2，T】&lt;br&gt;轨迹数、p的数量、总的时间步&lt;/span&gt;&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="140" x="1590" y="1178" as="geometry" />
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-175" edge="1" parent="1" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1435" y="1224.5" as="sourcePoint" />
+            <mxPoint x="1495" y="1224.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-176" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="跟上述同理" vertex="1">
+          <mxGeometry height="30" width="80" x="1405" y="1180" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;div style=&quot;background-color:#ffffff;color:#080808&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;平均正则项&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#000000;&quot;&gt;regularization&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;] = torch.mean(&lt;span style=&quot;color:#000000;&quot;&gt;regularization_temp&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;], &lt;span style=&quot;color:#660099;&quot;&gt;dim&lt;/span&gt;=-&lt;span style=&quot;color:#1750eb;&quot;&gt;1&lt;/span&gt;)&lt;/pre&gt;&lt;/div&gt;" link="&lt;div style=&quot;background-color:#ffffff;color:#080808&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;&quot;&gt;# &lt;/span&gt;&lt;span style=&quot;color:#8c8c8c;font-style:italic;font-family:&#39;Menlo-Regular&#39;,monospace;&quot;&gt;平均正则项&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#000000;&quot;&gt;regularization&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;] = torch.mean(&lt;span style=&quot;color:#000000;&quot;&gt;regularization_temp&lt;/span&gt;[&lt;span style=&quot;color:#000000;&quot;&gt;i&lt;/span&gt;], &lt;span style=&quot;color:#660099;&quot;&gt;dim&lt;/span&gt;=-&lt;span style=&quot;color:#1750eb;&quot;&gt;1&lt;/span&gt;)&lt;/pre&gt;&lt;/div&gt;" id="mugb4C7OIwAR_cT8KM-D-177">
+          <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+            <mxGeometry height="80" width="520" x="1560" y="1240" as="geometry" />
+          </mxCell>
+        </UserObject>
       </root>
     </mxGraphModel>
   </diagram>
