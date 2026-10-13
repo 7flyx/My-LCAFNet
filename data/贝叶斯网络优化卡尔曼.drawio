@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" pages="2">
+<mxfile host="app.diagrams.net" pages="3">
   <diagram name="Bayesian KalmanNet 网络架构" id="DIRcEkcVV3q_uI4KW9p4">
     <mxGraphModel dx="1774" dy="1081" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -229,7 +229,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="Yp9INwiToVZ0THFmfLue" name="大致内部框架">
-    <mxGraphModel dx="2627" dy="1222" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -406,7 +406,7 @@
             <mxGeometry height="80" width="560" x="1301" y="933.34" as="geometry" />
           </mxCell>
         </UserObject>
-        <mxCell id="mugb4C7OIwAR_cT8KM-D-57" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;strokeWidth=5;" value="">
+        <mxCell id="mugb4C7OIwAR_cT8KM-D-57" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;strokeWidth=5;fillColor=#d80073;strokeColor=#A50040;" value="">
           <mxGeometry height="50" relative="1" width="50" as="geometry">
             <mxPoint x="970" y="800" as="sourcePoint" />
             <mxPoint x="1060" y="850" as="targetPoint" />
@@ -741,6 +741,17 @@
         </mxCell>
         <mxCell id="mugb4C7OIwAR_cT8KM-D-179" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="具体的滤波过程&lt;div&gt;，暂时看作是黑盒&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="120" x="1615" y="492.22" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="_-a-7LsjLpfnw6uMV5gI" name="详细滤波过程">
+    <mxGraphModel dx="1064" dy="723" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="h2BOdDFnh8r5H_iT1Rac-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="详细的滤波过程" vertex="1">
+          <mxGeometry height="30" width="110" x="20" y="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
