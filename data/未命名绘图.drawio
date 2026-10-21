@@ -1,9 +1,748 @@
-<mxfile host="app.diagrams.net">
-  <diagram name="第 1 页" id="ma6AiTkb9TYUldIiLUzl">
-    <mxGraphModel>
+<mxfile host="app.diagrams.net" pages="8">
+  <diagram name="1 总览：从数据到结论" id="XmD-W-OxOPLXBrssO3-P">
+    <mxGraphModel dx="1636" dy="899" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="c24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#185FA5;dashed=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#185FA5;arcSize=3;" value="C 后处理与评估" vertex="1">
+          <mxGeometry height="880" width="680" x="1000" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#7F77DD;dashed=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#7F77DD;arcSize=3;" value="B 在线：MM-BKN 每个时间步（详见第 2 页）" vertex="1">
+          <mxGeometry height="880" width="560" x="420" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9E9E9E;dashed=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#9E9E9E;arcSize=3;" value="A 离线：数据与专家训练" vertex="1">
+          <mxGeometry height="880" width="380" x="20" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;MM-BKN 与混合方法：整体数据流（离线训练 → 在线逐步滤波 → 混合层 → 评估）&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1600" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;数据生成&lt;/b&gt;&lt;br&gt;仿真轨迹（CV/CA 切换、野值、时变噪声）&lt;br&gt;OpenSky 航迹 + 仿真雷达噪声&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mmbkn/data/gen_traj.py · scripts/prep_opensky.py&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="340" x="40" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;两个 BKN 专家分别训练（互不相干）&lt;/b&gt;&lt;br&gt;CV 专家：只用匀速段数据，状态 4 维&lt;br&gt;CA 专家：匀加速 / 机动段，状态 6 维&lt;br&gt;损失 =(1−β)·MSE + β·Σ|e²−方差| + dropout 正则&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;scripts/train_bkn_vec.py · bkn/filter.py: bkn_loss&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="40" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;专家离线标定&lt;/b&gt;&lt;br&gt;在专家自己的验证集上单独运行：&lt;br&gt;方差校准 σ_p, σ_v（, σ_a）&lt;br&gt;标称新息方差 S_nom、稳健尺度 S_rob&lt;br&gt;p–v 相关收缩系数 γ&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval_fusion.py: Expert.calibrate&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="340" x="40" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;融合超参数选择&lt;/b&gt;&lt;br&gt;在目标场景验证集上按位置 MSE 网格搜索：&lt;br&gt;s_key（Ŝ 取法）、温度 τ、coupling、&lt;br&gt;交互方式 mix、stay&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval_fusion.py main(): STAGE_A / STAGE_B&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="340" x="40" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;经典方法调参&lt;/b&gt;&lt;br&gt;经典 IMM（CV/CA，鲁棒、自适应、STF、CT/CT-EKF…）在同一验证集调参；&lt;br&gt;按验证集位置 MSE 选出“合作方”&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval/baselines.py: classical_methods&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="340" x="40" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="量测 y_t（只有位置 [p_x, p_y]）" vertex="1">
+          <mxGeometry height="70" width="500" x="450" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="① 马尔可夫预测 c(t) = Πᵀ μ(t−1)，混合概率 μ_{k|i}&lt;br&gt;② 样本云交互：每个专家的 J 个样本整体平移（第 3 页）" vertex="1">
+          <mxGeometry height="90" width="500" x="450" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="CV 专家 BKN 走一步&lt;br&gt;J 条 MC 链 → 4 维后验样本&lt;br&gt;（第 4 页）" vertex="1">
+          <mxGeometry height="110" width="240" x="450" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEBD8;strokeColor=#D9822B;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="CA 专家 BKN 走一步&lt;br&gt;J 条 MC 链 → 6 维后验样本&lt;br&gt;（第 4 页）" vertex="1">
+          <mxGeometry height="110" width="240" x="710" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="③ 新息似然 + 马尔可夫先验 → 模式概率 μ(t)（第 5 页）" vertex="1">
+          <mxGeometry height="90" width="500" x="450" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="④ 每个专家：J 个样本 → [p,v] 均值与 2×2 协方差（标定、收缩）&lt;br&gt;⑤ 矩匹配：x̂ = Σμ m，P = Σμ (C + 分歧项)（第 6 页）" vertex="1">
+          <mxGeometry height="90" width="500" x="450" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="MM-BKN 输出：x̂(t)（每轴 [p,v]）、P(t)（每轴 2×2）、μ(t)&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;fusion/mm_runner.py: run_mm&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="500" x="450" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" edge="1" parent="1" source="c9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" edge="1" parent="1" source="c10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" edge="1" parent="1" source="c10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c12" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" edge="1" parent="1" source="c11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" edge="1" parent="1" source="c12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" edge="1" parent="1" source="c13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" edge="1" parent="1" source="c14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c15" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" edge="1" parent="1" source="c13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="c10" value="μ(t) 回到下一步">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="975" y="545" />
+              <mxPoint x="975" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="经典合作方输出 x₂, P₂&lt;br&gt;（同一测试数据上运行）" vertex="1">
+          <mxGeometry height="90" width="300" x="1030" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;混合层（第 7 页）&lt;/b&gt;&lt;br&gt;w 为 MM-BKN 的权重（位置、速度各一个）：固定权重或 GBM 逐步权重&lt;br&gt;x = w·x₁ + (1−w)·x₂；协方差 mix 或 mm+shift&lt;br&gt;防护：两者差异 d² &gt; 13.8 时只用 MM-BKN&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;fusion/hybrid.py: build_rows / apply_layer&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="620" x="1030" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="c27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;统一协方差校准（第 8 页）&lt;/b&gt;&lt;br&gt;每个方法（MM-BKN、经典、混合）的输出协方差都在同一验证集上做逐分量尺度校准 κ_p, κ_v&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval_fusion.py: cov_scale / apply_cov_scale&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="620" x="1030" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="c28" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;指标与检验&lt;/b&gt;&lt;br&gt;精度：位置 / 速度 MSE（dB）&lt;br&gt;不确定性：NLL、ANEES、95% 覆盖率；机动开始 0–9 步、持续段 2–9 步&lt;br&gt;显著性：配对 bootstrap（半实测按飞机聚类）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval/metrics.py · scripts/bootstrap_sig.py · hybrid_report.py&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="620" x="1030" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="c29" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c30" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c31" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c32" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c33" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c11" value="网络权重">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="415" y="295" />
+              <mxPoint x="415" y="405" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c34" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c14" value="σ, γ, S_nom">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="425" y="475" />
+              <mxPoint x="425" y="675" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c35" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c13" value="s_key, τ, stay…">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c36" edge="1" parent="1" source="c15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="c26" value="x₁, P₁, μ">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="995" y="800" />
+              <mxPoint x="995" y="372" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c37" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c25" value="选中的合作方">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="884" />
+              <mxPoint x="410" y="950" />
+              <mxPoint x="1005" y="950" />
+              <mxPoint x="1005" y="155" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c38" edge="1" parent="1" source="c25" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c26" value="x₂, P₂">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c39" edge="1" parent="1" source="c26" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c27" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c40" edge="1" parent="1" source="c27" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c28" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="2 单步数据流（时刻 t）" id="-v4b-PHksd4Ghu41hdQX">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1700" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;MM-BKN 在时刻 t 的一步（fusion/mm_runner.py: run_mm 的 for t 循环）&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1600" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=13;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="形状记号：B 条轨迹 × J 个 MC 样本 = N 条链；D = 2 轴；M = 2 个专家；CV 状态 [p_x,p_y,v_x,v_y]（4 维），CA 再加 [a_x,a_y]（6 维）。紫色 = 两专家耦合的步骤；青色 = CV 专家；橙色 = CA 专家；虚线 = 带到下一时刻的量。" vertex="1">
+          <mxGeometry height="40" width="1600" x="30" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入 1&lt;/b&gt;&lt;br&gt;μ(t−1) : (B, D, M)&lt;br&gt;上一步的模式概率&lt;br&gt;（t=1 时为 [0.5, 0.5]）" vertex="1">
+          <mxGeometry height="110" width="330" x="40" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入 2&lt;/b&gt;&lt;br&gt;X_CV(t−1|t−1) : (B, J, 4)&lt;br&gt;X_CA(t−1|t−1) : (B, J, 6)&lt;br&gt;两个专家的后验样本云&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;st.x_post&lt;/font&gt;" vertex="1">
+          <mxGeometry height="140" width="330" x="40" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入 3&lt;/b&gt;&lt;br&gt;各专家每条链的 GRU 隐状态 h : (L, N, H)&lt;br&gt;上一步的特征历史&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;BKNStepper 内部&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="330" x="40" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入 4&lt;/b&gt;&lt;br&gt;y_t : (B, 2)  本步量测" vertex="1">
+          <mxGeometry height="80" width="330" x="40" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;① 马尔可夫预测与混合概率&lt;/b&gt;&lt;br&gt;c_i = Σ_k Π_ki μ_k(t−1)&lt;br&gt;μ_{k|i} = Π_ki μ_k / c_i&lt;br&gt;Π: 对角 stay=0.98，非对角 0.02&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:125-127&lt;/font&gt;" vertex="1">
+          <mxGeometry height="120" width="380" x="420" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;② 样本云交互（第 3 页）&lt;/b&gt;&lt;br&gt;m_k = 样本均值（公共子状态 [p,v] 4 维）&lt;br&gt;m̄_i = Σ_k μ_{k|i} m_k&lt;br&gt;每个样本 s_i⁽ʲ⁾ += m̄_i − m_i&lt;br&gt;加速度分量、GRU 隐状态不动&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:128-155&lt;/font&gt;" vertex="1">
+          <mxGeometry height="140" width="380" x="420" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;③a CV 专家 BKN 一步（第 4 页）&lt;/b&gt;&lt;br&gt;x_pred = F_CV x̃&lt;br&gt;ŷ = H x_pred&lt;br&gt;4 个特征 → 网络 → K(4×2)&lt;br&gt;x_post = x_pred + K (y_t − ŷ)&lt;br&gt;N 条链各自 dropout&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;bkn/filter.py: BKNStepper.step&lt;/font&gt;" vertex="1">
+          <mxGeometry height="170" width="330" x="850" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEBD8;strokeColor=#D9822B;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;③b CA 专家 BKN 一步&lt;/b&gt;&lt;br&gt;x_pred = F_CA x̃&lt;br&gt;ŷ = H x_pred&lt;br&gt;4 个特征 → 网络 → K(6×2)&lt;br&gt;x_post = x_pred + K (y_t − ŷ)&lt;br&gt;N 条链各自 dropout&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;bkn/filter.py: BKNStepper.step&lt;/font&gt;" vertex="1">
+          <mxGeometry height="170" width="330" x="850" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;④ 新息似然（第 5 页）&lt;/b&gt;&lt;br&gt;ν_i = y_t − mean_j ŷ_i⁽ʲ⁾   (B, 2)&lt;br&gt;Ŝ_i：nom / nom_t / ens / gain / emp 之一&lt;br&gt;ℓ_i,d = −(ν²/Ŝ + ln Ŝ)/(2τ)（或 Student-t）&lt;br&gt;joint：ℓ_i = ℓ_i,x + ℓ_i,y&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:159-200&lt;/font&gt;" vertex="1">
+          <mxGeometry height="200" width="420" x="1230" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;⑤ 模式概率更新（第 5 页）&lt;/b&gt;&lt;br&gt;μ̃_i ∝ c_i · exp(ℓ_i)（softmax）&lt;br&gt;μ_i = max(μ̃_i, 10⁻³) 再归一化&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:204-220&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="420" x="1230" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;⑥ 矩匹配融合（第 6 页）&lt;/b&gt;&lt;br&gt;每个专家：J 个后验样本 → 每轴 [p,v] 均值 m_i,d 与 2×2 样本协方差 C_i,d → 方差校准 Λ_i^{1/2} C Λ_i^{1/2} → p–v 相关 × (1−γ_i)&lt;br&gt;x̂_d = Σ_i μ_i m_i,d&lt;br&gt;P_d = Σ_i μ_i [ C̃_i,d + (m_i,d − x̂_d)(m_i,d − x̂_d)ᵀ ]&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:222-246 · pv_mean_cov:51-70&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="800" x="850" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输出&lt;/b&gt;&lt;br&gt;x̂(t) : (B, D, 2)　P(t) : (B, D, 2, 2)　μ(t) : (B, D, M)&lt;br&gt;另存：各专家均值 xe、门控用的 gate_c / gate_y / gate_S / gate_V" vertex="1">
+          <mxGeometry height="100" width="800" x="850" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c8" value="μ_{k|i}">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" edge="1" parent="1" source="c8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c9" value="X̃_CV">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" edge="1" parent="1" source="c8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c10" value="X̃_CA">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="825" y="372" />
+              <mxPoint x="825" y="515" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c20" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="c10" value="h, 特征历史">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="475" />
+              <mxPoint x="400" y="640" />
+              <mxPoint x="830" y="640" />
+              <mxPoint x="830" y="557" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c21" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.65;entryDx=0;entryDy=0;" target="c10" value="y_t">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="600" />
+              <mxPoint x="410" y="620" />
+              <mxPoint x="820" y="620" />
+              <mxPoint x="820" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c22" edge="1" parent="1" source="c9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c11" value="ŷ_CV⁽ʲ⁾, K_CV">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" edge="1" parent="1" source="c10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" target="c11" value="ŷ_CA⁽ʲ⁾, K_CA">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c24" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c12" value="c(t)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1210" y="146" />
+              <mxPoint x="1210" y="450" />
+              <mxPoint x="1440" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c25" edge="1" parent="1" source="c11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c12" value="ℓ_i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c26" edge="1" parent="1" source="c9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" target="c13" value="X_CV(t|t)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1015" y="420" />
+              <mxPoint x="1015" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c27" edge="1" parent="1" source="c10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" target="c13" value="X_CA(t|t)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c28" edge="1" parent="1" source="c12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;" target="c13" value="μ(t)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c29" edge="1" parent="1" source="c13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c30" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;带到下一时刻 t+1 的量&lt;/b&gt;&lt;br&gt;• μ(t) → 下一步的 ① 马尔可夫预测&lt;br&gt;• 两个专家的后验样本 X_i(t|t)（未交互的原始后验）→ 下一步的 ② 交互&lt;br&gt;• 每条链的 GRU 隐状态 h、特征历史（x 的上一后验 / 上一先验、上一量测）→ 下一步的 ③&lt;br&gt;• 上一步的平均增益 K̄_i（只在 s_key = gain 时用）、新息平方历史（只在 s_key = emp 时用）→ 下一步的 ④&lt;br&gt;&lt;br&gt;&lt;b&gt;两个专家只在三处耦合&lt;/b&gt;：② 交互（均值互相拉近）、⑤ 模式概率（竞争谁更能解释 y_t）、⑥ 融合。&lt;br&gt;其余部分（网络、GRU、运动模型）各自独立。" vertex="1">
+          <mxGeometry height="270" width="760" x="40" y="690" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="3 样本云交互" id="-ZvYyX9JXs7nDLvr1emQ">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;② 样本云交互（mix = &quot;mean&quot;，论文配置）：每个专家的 J 个样本整体平移，离散度不变&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1500" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入：混合概率&lt;/b&gt;&lt;br&gt;μ(t−1)：(B, D, M)&lt;br&gt;Π：(M, M)&lt;br&gt;→ c(t)：(B, D, M)&lt;br&gt;→ mixp[b,d,k,i] = μ_{k|i}：(B, D, M, M)&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:125-127&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="330" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入：两团样本云&lt;/b&gt;&lt;br&gt;X_CV：(B, J, 4) = st.x_post.view(B,J,−1)&lt;br&gt;X_CA：(B, J, 6)&lt;br&gt;公共子状态 common_i = X_i[..., :4]&lt;br&gt;顺序 [p_x, p_y, v_x, v_y]&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:129-131&lt;/font&gt;" vertex="1">
+          <mxGeometry height="170" width="330" x="40" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;步骤 1：每个专家的样本均值&lt;/b&gt;&lt;br&gt;m_k = (1/J) Σ_j common_k⁽ʲ⁾ ：(B, 4)&lt;br&gt;means = stack_k m_k：(B, 4, M)&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:138&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="400" x="430" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;步骤 2：混合均值&lt;/b&gt;&lt;br&gt;对接收方 i：权重 w = mixp[:, axis_of, :, i]：(B, 4, M)&lt;br&gt;（axis_of = [0,1,0,1] 把 4 个分量映射到 x/y 轴，&lt;br&gt;joint 时两轴相同）&lt;br&gt;m̄_i = Σ_k w_k m_k：(B, 4)&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:134-139&lt;/font&gt;" vertex="1">
+          <mxGeometry height="160" width="400" x="430" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;步骤 3：整体平移&lt;/b&gt;&lt;br&gt;common_i⁽ʲ⁾ ← common_i⁽ʲ⁾ + (m̄_i − m_i)　对所有 j&lt;br&gt;同一个平移向量 → 样本协方差不变&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:140&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="400" x="430" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;步骤 4：写回&lt;/b&gt;&lt;br&gt;X_i[..., :4] = 平移后的 common_i&lt;br&gt;CA 的 [a_x, a_y] 保持原值&lt;br&gt;st.x_post = X_i.reshape(N, m_i)&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:151-155&lt;/font&gt;" vertex="1">
+          <mxGeometry height="120" width="400" x="430" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输出&lt;/b&gt;&lt;br&gt;X̃_CV：(B, J, 4) → CV 专家的 BKN 一步&lt;br&gt;X̃_CA：(B, J, 6) → CA 专家的 BKN 一步&lt;br&gt;（作为 x_{t−1|t−1} 输入第 4 页）" vertex="1">
+          <mxGeometry height="120" width="330" x="900" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.6;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c5" value="μ_{k|i}">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.6;entryDx=0;entryDy=0;" target="c4" value="common_k">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="321" />
+              <mxPoint x="400" y="158" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c11" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c5" value="m_k">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c6" value="m̄_i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c6" value="common_i">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="205" y="515" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c14" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;数值例子&lt;/b&gt;（μ(t−1) = [0.9, 0.1]，stay = 0.98）&lt;br&gt;c_CV = 0.98×0.9 + 0.02×0.1 = 0.884，μ_{CA|CV} = 0.002/0.884 ≈ 0.002：CV 专家几乎不动&lt;br&gt;c_CA = 0.02×0.9 + 0.98×0.1 = 0.116，μ_{CV|CA} = 0.018/0.116 ≈ 0.155：CA 专家被拉向 CV 约 15.5%&lt;br&gt;&lt;br&gt;&lt;b&gt;结论&lt;/b&gt;：概率小的专家被概率大的专家拉过去，和经典 IMM 相同。" vertex="1">
+          <mxGeometry height="250" width="660" x="900" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;和经典 IMM 的区别&lt;/b&gt;&lt;br&gt;• 经典 IMM 同时混合均值和协方差：P̄_i = Σ_k μ_{k|i} [P_k + (m_k − m̄_i)(·)ᵀ]&lt;br&gt;• 这里协方差由样本离散度承载，只平移均值，不改离散度、不改 GRU 隐状态&lt;br&gt;&lt;br&gt;&lt;b&gt;消融里的另外两种&lt;/b&gt;&lt;br&gt;• mix = &quot;sample&quot;：每个样本 j 按 μ_{k|i} 抽一个来源专家，直接拷贝其样本（均值和离散度一起混合）&lt;br&gt;• mix = &quot;none&quot;：不交互，两个专家各自独立" vertex="1">
+          <mxGeometry height="230" width="660" x="900" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDECEA;strokeColor=#C62828;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;审核要点&lt;/b&gt;&lt;br&gt;1. mixp 的下标顺序是 [b, d, k(来源), i(接收)]，每个 i 的 Σ_k mixp = 1（c 在分母）。&lt;br&gt;2. 平移量用的是“混合均值 − 自己的均值”，不是“混合均值 − 每个样本”，所以样本间相对位置不变（可检查交互前后 X.var(1) 不变）。&lt;br&gt;3. 只改公共子状态 [:4]；CA 专家的加速度不动。注意状态布局是 BKN 布局 [p_x,p_y,v_x,v_y,(a_x,a_y)]，不是每轴 [p,v,a]。&lt;br&gt;4. 交互改的是 st.x_post（下一步网络的输入状态）；BKNStepper 内部保存的特征历史（上一后验 / 上一先验）不随之改变。" vertex="1">
+          <mxGeometry height="170" width="1520" x="40" y="780" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="4 BKN 内部（一个专家、一步）" id="Yb1f_w8I05z9v-14UQsN">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1700" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;BKN 一步：线性预测 + 网络给增益 K + 残差更新（bkn/filter.py: BKNStepper.step，bkn/net.py: KNetV1Vec）&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1600" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入&lt;/b&gt;&lt;br&gt;x̃_{t−1|t−1}：(N, m)（交互后）&lt;br&gt;y_t：(N, 2)（每条链同一个量测）&lt;br&gt;h：(L, N, H)" vertex="1">
+          <mxGeometry height="110" width="300" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;线性预测&lt;/b&gt;&lt;br&gt;x_pred = F x̃：(N, m)&lt;br&gt;ŷ = H x_pred：(N, 2)&lt;br&gt;F：CV 或 CA 运动模型（dt = 0.1）&lt;br&gt;H 取出两个位置&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;filter.py:42,50 · expert.py: model_matrices&lt;/font&gt;" vertex="1">
+          <mxGeometry height="120" width="300" x="40" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;4 个输入特征（官方 BKN 顺序）&lt;/b&gt;&lt;br&gt;F1 = post_past − pred_past&lt;br&gt;　 = x̃_{t−2|t−2} − x_{t−1|t−2} = (I − F) x̃_{t−2|t−2}&lt;br&gt;F2 = y_t − ŷ（本步新息）&lt;br&gt;F3 = x̃_{t−1|t−1} − x̃_{t−2|t−2}（后验变化）&lt;br&gt;F4 = y_t − y_{t−1}（量测差分）&lt;br&gt;拼接 feat：(N, 2m + 2n)&lt;br&gt;t = 1 时历史就地初始化：F3 = F4 = 0，F1 = x₀ − F x₀&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;filter.py:43-55&lt;/font&gt;" vertex="1">
+          <mxGeometry height="280" width="420" x="400" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;ConcreteDropout 1（输入层）&lt;/b&gt;&lt;br&gt;feat / feat_scale（默认全 1）&lt;br&gt;u ~ U(0,1) 每个元素&lt;br&gt;keep = 1 − sigmoid((logit p + logit u)/0.1)&lt;br&gt;x · keep / (1 − p)&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;net.py:38-46, 93&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="360" x="880" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="Linear(2m+2n → H1) + ReLU&lt;br&gt;H1 = (m+n)·80" vertex="1">
+          <mxGeometry height="70" width="360" x="880" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="GRU，L = 2 层，隐维 H = 4(m² + n²)&lt;br&gt;序列长度 1（逐步调用），h 每条链各自保存&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;net.py:74, 94&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="360" x="880" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="ConcreteDropout 2（GRU 输出上，另一组随机数）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;net.py:95&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="360" x="880" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="Linear(H → H2) + ReLU + Linear(H2 → m·n)&lt;br&gt;H2 = 4·m·n&lt;br&gt;reshape → K：(N, m, 2)" vertex="1">
+          <mxGeometry height="90" width="360" x="880" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;更新&lt;/b&gt;&lt;br&gt;x_post = x_pred + K (y_t − ŷ)：(N, m)&lt;br&gt;存 post_past ← x̃_{t−1|t−1}，pred_past ← x_pred，obs_past ← y_t（detach）&lt;br&gt;x_post ← x_new（detach，跨步不反传状态）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;filter.py:65-75&lt;/font&gt;" vertex="1">
+          <mxGeometry height="120" width="420" x="400" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输出&lt;/b&gt;&lt;br&gt;x_new：(N, m) 后验样本 → view(B, J, m)&lt;br&gt;ŷ：(N, 2) 先验量测预测 → 似然&lt;br&gt;K：(N, m, 2) → s_key=gain 时用" vertex="1">
+          <mxGeometry height="110" width="420" x="400" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c4" value="x_pred, ŷ">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.2;entryDx=0;entryDy=0;" target="c4" value="x̃, y_t">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c5" value="feat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c8" value="GRU 输出">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" edge="1" parent="1" source="c8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" edge="1" parent="1" source="c9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="c10" value="K">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c10" value="x_pred, ŷ">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c22" edge="1" parent="1" source="c10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c2" value="h 留给下一步">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1270" y="365" />
+              <mxPoint x="1270" y="60" />
+              <mxPoint x="190" y="60" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;网络尺寸&lt;/b&gt;（n = 2）&lt;br&gt;&lt;br&gt;&lt;b&gt;CV 专家&lt;/b&gt;（m = 4）&lt;br&gt;输入 12 → H1 480 → GRU 2×80 → H2 32 → 输出 8（K 为 4×2）&lt;br&gt;&lt;br&gt;&lt;b&gt;CA 专家&lt;/b&gt;（m = 6）&lt;br&gt;输入 16 → H1 640 → GRU 2×160 → H2 48 → 输出 12（K 为 6×2）&lt;br&gt;&lt;br&gt;同一个专家只有一套权重和两个 dropout 概率 p；J 条链共享权重，随机性只来自每步重新采样的 dropout 噪声。" vertex="1">
+          <mxGeometry height="300" width="380" x="1290" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;训练&lt;/b&gt;（scripts/train_bkn_vec.py，enhanced 配方）&lt;br&gt;• 5000 次迭代，batch 32，训练时 J = 10，学习率 1e-3 → 1e-5（余弦）&lt;br&gt;• 损失 bkn_loss：(1−β)·mean(e²) + β·Σ|e² − Var_j| + B(T−1)·dropout 正则，β = 0.01&lt;br&gt;• 只用 t ≥ 1；状态跨步 detach，GRU 隐状态保留 BPTT&lt;br&gt;• 推理（评估）时 J = 20，dropout 仍然采样（MC dropout）" vertex="1">
+          <mxGeometry height="320" width="380" x="1290" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="c26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDECEA;strokeColor=#C62828;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;审核要点&lt;/b&gt;&lt;br&gt;1. &lt;b&gt;F1 的实际含义&lt;/b&gt;：代码完全照搬官方 BKN（GSSFiltering/filtering.py:190, 208-209）。在第 t 步时 post_past = x̃_{t−2|t−2}、pred_past = x_{t−1|t−2} = F x̃_{t−2|t−2}，所以 F1 = (I − F) x̃_{t−2|t−2}；对 CV 就是 [−dt·v_x, −dt·v_y, 0, 0]（两步前的速度乘 −dt）。filter.py:52 的注释和旧版《数据流说明》写的 “x_{t−1|t−1} − x_{t−1|t−2}（上一步更新量）” 与代码不符；这是官方实现的特点，不是移植错误，但汇报时不要说成 KalmanNet 论文里的“前向更新差”。&lt;br&gt;2. dropout 在 eval()/no_grad() 下照样采样（net.py:43 没有 training 分支），这正是 MC dropout 需要的。&lt;br&gt;3. 每条链有自己的 x_post 和 h；J 条链从同一个 x₀、同一个 hn_init 出发，之后靠 dropout 分化。&lt;br&gt;4. 状态布局是 [p_x, p_y, v_x, v_y, (a_x, a_y)]；H 只取前两维；协方差从 J 个样本算，网络本身不输出协方差。&lt;br&gt;5. 交互只改 x_post，不改 post_past / pred_past，所以 F1 用的是上一步交互后的后验，F3 = 本步交互后后验 − 上一步交互后后验。" vertex="1">
+          <mxGeometry height="300" width="1630" x="40" y="790" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="5 马尔可夫与模式概率更新" id="_pDLTEIP7rkR12V6crcz">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="1050" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;① 马尔可夫预测 + ④ 新息似然 + ⑤ 模式概率更新（mm_runner.py:125-127, 159-220）&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1500" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;马尔可夫预测&lt;/b&gt;&lt;br&gt;Π = [[0.98, 0.02], [0.02, 0.98]]（stay 在验证集上选）&lt;br&gt;Π_ki：上一步模式 k → 这一步模式 i&lt;br&gt;c_i(t) = Σ_k Π_ki μ_k(t−1)&lt;br&gt;（看到 y_t 之前的预测概率）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:98-100, 125&lt;/font&gt;" vertex="1">
+          <mxGeometry height="170" width="360" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;新息&lt;/b&gt;&lt;br&gt;专家 i 的 J 个 ŷ_i⁽ʲ⁾：(B, J, 2)&lt;br&gt;ȳ_i = mean_j ŷ_i⁽ʲ⁾&lt;br&gt;ν_i = y_t − ȳ_i：(B, 2)&lt;br&gt;（用交互后状态的先验预测）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:164-165&lt;/font&gt;" vertex="1">
+          <mxGeometry height="170" width="420" x="460" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;新息方差 Ŝ_i,d（s_key 五选一）&lt;/b&gt;&lt;br&gt;&lt;b&gt;nom&lt;/b&gt;：S_nom（专家验证集上 mean ν²，常数）&lt;br&gt;&lt;b&gt;nom_t&lt;/b&gt;：S_rob = (median|ν|/0.6745)²，配 Student-t&lt;br&gt;&lt;b&gt;ens&lt;/b&gt;：Var_j ŷ_i⁽ʲ⁾ + r²&lt;br&gt;&lt;b&gt;gain&lt;/b&gt;：(I − sym(H K̄_i(t−1))_clip)⁻¹ r²I 的对角（上一步平均增益反推）&lt;br&gt;&lt;b&gt;emp&lt;/b&gt;：最近 10 步 ν² 的均值 + 10⁻³（不足 10 步用 S_nom）&lt;br&gt;全部截断 Ŝ ≥ 10⁻⁶&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:168-193&lt;/font&gt;" vertex="1">
+          <mxGeometry height="300" width="420" x="460" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;对数似然&lt;/b&gt;&lt;br&gt;高斯：ℓ_i,d = −(ν²/Ŝ + ln Ŝ) / (2τ)&lt;br&gt;Student-t（f = 4）：&lt;br&gt;ℓ_i,d = [−½ ln Ŝ − (f+1)/2 · ln(1 + ν²/(fŜ))] / τ&lt;br&gt;温度 τ ∈ {1, 2, 4}（验证集选）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:196-200&lt;/font&gt;" vertex="1">
+          <mxGeometry height="200" width="420" x="940" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;两轴耦合&lt;/b&gt;&lt;br&gt;coupling = joint：ℓ_i = ℓ_i,x + ℓ_i,y（两轴共用一个 μ）&lt;br&gt;coupling = axis：每轴各自更新&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:215-216&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="420" x="940" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;贝叶斯更新（mode_rule = imm）&lt;/b&gt;&lt;br&gt;log w_i = ln c_i + ℓ_i → softmax&lt;br&gt;μ_i = max(w_i, 10⁻³) / Σ_k max(w_k, 10⁻³)&lt;br&gt;（下限保证切换后能“回得来”）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:217-219&lt;/font&gt;" vertex="1">
+          <mxGeometry height="140" width="420" x="940" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输出&lt;/b&gt;&lt;br&gt;μ(t)：(B, D, M) → ⑥ 融合权重；也是下一步 ① 的 μ(t−1)" vertex="1">
+          <mxGeometry height="90" width="420" x="940" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c7" value="c(t)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c10" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c4" value="ν_i（emp 用历史）">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c5" value="ν_i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" target="c5" value="Ŝ_i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;对比：注意力规则&lt;/b&gt;（消融，mode_rule = att，参考 Mari &amp; Snidaro 2026）&lt;br&gt;μ_i = softmax_i( −Σ_d ν_i,d² / Ŝ_i,d )：只看当前一步，没有马尔可夫先验、没有 ln Ŝ 项&lt;br&gt;反应更快但更容易抖动；本工作结果中它的校准更差。&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:206-210&lt;/font&gt;" vertex="1">
+          <mxGeometry height="160" width="820" x="40" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDECEA;strokeColor=#C62828;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;审核要点&lt;/b&gt;&lt;br&gt;1. ŷ 来自交互后的状态（ŷ = H F x̃），所以似然评价的是“交互后的预测”，与经典 IMM 用混合后状态做预测一致。&lt;br&gt;2. gain 取法用的是上一步的 K̄（Kbar_prev 在本步计算 S 之后才更新为本步 K），因此是因果的；第 1 步 S = r²。&lt;br&gt;3. 两轴 joint 时 ll 先相加再 expand，所以 μ 在两轴上相同；μ 的形状仍是 (B, D, M)。&lt;br&gt;4. softmax 里加的是 ln c（c 截断在 1e-30 以上），等价于 c·exp(ℓ) 归一化；之后的 10⁻³ 下限会使 μ 不完全等于贝叶斯后验。" vertex="1">
+          <mxGeometry height="180" width="1520" x="40" y="830" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="6 矩匹配融合" id="hD57cltmT0FhZBhpwMfq">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;⑥ 从样本云到每轴 [p,v] 高斯，再按 μ 矩匹配（mm_runner.py:222-246，pv_mean_cov:51-70）&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1500" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入&lt;/b&gt;&lt;br&gt;X_i(t|t)：(B, J, m_i) 后验样本&lt;br&gt;μ(t)：(B, D, M)&lt;br&gt;标定量：σ_i,p, σ_i,v（var_scale），γ_i（shrink）" vertex="1">
+          <mxGeometry height="120" width="330" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;样本均值与样本协方差&lt;/b&gt;&lt;br&gt;z_i,d⁽ʲ⁾ = [p_d, v_d]⁽ʲ⁾（x 轴取 [0,2]，y 轴取 [1,3]）&lt;br&gt;m_i,d = mean_j z：(B, D, 2)&lt;br&gt;C_i,d = Σ_j (z − m)(z − m)ᵀ / (J − 1)：(B, D, 2, 2)&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;pv_mean_cov:57-61&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="420" x="430" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;方差校准与相关收缩&lt;/b&gt;&lt;br&gt;C̃ = Λ^{1/2} C Λ^{1/2}，Λ = diag(σ_p, σ_v)&lt;br&gt;（对角 ×σ，非对角 ×√(σ_p σ_v)）&lt;br&gt;非对角再乘 (1 − γ_i)：J = 20 个样本估的相关系数噪声大&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;pv_mean_cov:62-69 · mm_runner.py:229-233&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="420" x="430" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;矩匹配&lt;/b&gt;&lt;br&gt;x̂_d = Σ_i μ_i m_i,d&lt;br&gt;P_d = Σ_i μ_i [ C̃_i,d + (m_i,d − x̂_d)(m_i,d − x̂_d)ᵀ ]&lt;br&gt;　第一项：专家自身的不确定性（样本离散度）&lt;br&gt;　第二项：专家之间的分歧（机动开始时变大）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;mm_runner.py:236-244&lt;/font&gt;" vertex="1">
+          <mxGeometry height="160" width="420" x="430" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;统一输出校准（所有方法相同）&lt;/b&gt;&lt;br&gt;P ← K^{1/2} P K^{1/2}，K = diag(κ_p, κ_v)&lt;br&gt;κ_c = mean(e_c² / P_cc)（目标场景验证集）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval_fusion.py: cov_scale / apply_cov_scale&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="420" x="430" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;MM-BKN 最终输出&lt;/b&gt;&lt;br&gt;x̂(t)：(B, D, 2)&lt;br&gt;P(t)：(B, D, 2, 2)（两轴之间块对角）" vertex="1">
+          <mxGeometry height="110" width="400" x="920" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c5" value="μ(t)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="205" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c12" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;几个副产品（同一组样本）&lt;/b&gt;&lt;br&gt;• P_full0：不收缩的完整协方差（消融“cov=full, no shrinkage”）&lt;br&gt;• P_diag：只保留方差（消融“cov=diag”，即官方 BKN 只给对角方差）&lt;br&gt;三者用同一组样本、同一组 μ，所以消融差异不混入 MC 噪声。&lt;br&gt;&lt;br&gt;&lt;b&gt;t = 0&lt;/b&gt;：x̂ 取第一个专家的初始状态，P = I，不计入任何指标。" vertex="1">
+          <mxGeometry height="300" width="640" x="920" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDECEA;strokeColor=#C62828;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;审核要点&lt;/b&gt;&lt;br&gt;1. 样本协方差除以 J−1（无偏），与 torch.var 一致。&lt;br&gt;2. 校准系数 σ 来自专家自己的验证集（Expert.calibrate），而 κ 来自目标场景验证集，两层校准是叠加的。&lt;br&gt;3. 分歧项用的是融合后的 x̂_d，不是每个专家自己的均值。&lt;br&gt;4. P 只在每轴内是 2×2，两轴之间没有交叉项（块对角）。" vertex="1">
+          <mxGeometry height="210" width="640" x="920" y="410" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="7 混合层（MM-BKN + 经典 IMM）" id="iyWoxJluwACcVfOaYejg">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1700" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;混合层：在 MM-BKN 输出之后加一层（fusion/hybrid.py: build_rows / apply_layer）&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1600" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入：MM-BKN&lt;/b&gt;&lt;br&gt;x₁, P₁（未做最终校准）, μ&lt;br&gt;验证集与测试集各一份" vertex="1">
+          <mxGeometry height="120" width="330" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输入：经典合作方&lt;/b&gt;&lt;br&gt;全部已调好的经典方法在验证集上的输出&lt;br&gt;选验证集位置 MSE 最小者 → x₂, P₂&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;build_rows: val_db / min&lt;/font&gt;" vertex="1">
+          <mxGeometry height="140" width="330" x="40" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;各自先校准&lt;/b&gt;&lt;br&gt;k₁ = cov_scale(x₁, P₁)，k₂ = cov_scale(x₂, P₂)（验证集）&lt;br&gt;P₁ ← k₁ 校准，P₂ ← k₂ 校准&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;hybrid.py: _components&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="400" x="430" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;固定权重（验证集最小二乘）&lt;/b&gt;&lt;br&gt;w = ⟨truth − x₂, x₁ − x₂⟩ / ‖x₁ − x₂‖²，截断到 [0,1]&lt;br&gt;位置、速度各一个，两轴共用&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;hybrid.py: fit_fixed_w&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="400" x="430" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;GBM 逐步权重&lt;/b&gt;&lt;br&gt;特征：两者最近 8 步新息（截断 ±4σ）、logit P(CA)、x₁−x₂、两者协方差对角的对数&lt;br&gt;目标（mse，默认）：未截断的 w* = (truth − x₂)/(x₁ − x₂)，样本权重 d² = (x₁−x₂)²&lt;br&gt;→ Σ d²(w − w*)² 恰好等于融合平方误差&lt;br&gt;预测后截断到 [0,1]&lt;br&gt;训练数据：新种子轨迹（不与验证 / 测试重叠）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;hybrid.py: features / mse_targets / GBMWeights&lt;/font&gt;" vertex="1">
+          <mxGeometry height="220" width="400" x="430" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;发散防护（+guard 行）&lt;/b&gt;&lt;br&gt;d² = (x₂ − x₁)ᵀ P₁⁻¹ (x₂ − x₁)&lt;br&gt;d² &gt; 13.8（χ²₂ 的 99.9%）或合作方非有限 → 本步只用 MM-BKN 的 x₁, P₁&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;hybrid.py: divergence_guard / blend_cov(keep1)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="130" width="400" x="430" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;融合均值与协方差&lt;/b&gt;&lt;br&gt;x = w·x₁ + (1 − w)·x₂（逐分量）&lt;br&gt;mix：wc P₁ + (1−wc) P₂ + wc(1−wc)(x₁−x₂)(x₁−x₂)ᵀ，wc = w 的均值&lt;br&gt;mm+shift：P₁ + (x − x₁)(x − x₁)ᵀ&lt;br&gt;在验证集上按持续段 |ln ANEES| 二选一&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;hybrid.py: blend_cov / select_cov&lt;/font&gt;" vertex="1">
+          <mxGeometry height="200" width="400" x="900" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;最终尺度&lt;/b&gt;&lt;br&gt;κ 校准（与所有方法相同，目标场景验证集）&lt;br&gt;&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval_fusion.py: cov_scale&lt;/font&gt;" vertex="1">
+          <mxGeometry height="110" width="400" x="900" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;输出行&lt;/b&gt;&lt;br&gt;MM-BKN+IMM hybrid (fixed w / GBM w / …+guard)&lt;br&gt;以及 cov=mix / cov=mm+shift 子行" vertex="1">
+          <mxGeometry height="110" width="400" x="900" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" target="c4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c8" value="x₁,P₁,x₂,P₂">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="135" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c16" edge="1" parent="1" source="c5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" target="c8" value="w">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" target="c8" value="w(t)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" target="c8" value="keep1 掩码">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="659" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c19" edge="1" parent="1" source="c8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" edge="1" parent="1" source="c9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#4A5058;fontSize=11;labelBackgroundColor=#FFFFFF;" target="c10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#C9A227;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;冻结层&lt;/b&gt;（--hybrid-freeze-from）&lt;br&gt;build_rows 返回 layer（合作方及其调参、k₁、k₂、固定权重、GBM、协方差方式、最终尺度），apply_layer 把它原样用到之后的切分（如 S-C 拟合 → S-E 测试），检验整套方法对未见转弯的泛化。" vertex="1">
+          <mxGeometry height="340" width="330" x="1340" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDECEA;strokeColor=#C62828;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;审核要点&lt;/b&gt;&lt;br&gt;1. w 是 MM-BKN 的权重：w = 1 即只用 MM-BKN。固定权重的公式是对 Σ(w·d − (truth − x₂))² 求最小，截断方向正确。&lt;br&gt;2. 防护触发时必须显式取 x₁、P₁（np.where），不能依赖 1·x₁ + 0·x₂：合作方为 NaN 时 0·NaN 仍是 NaN（2026-10-20 已修，tests/test_hybrid.py 覆盖）。&lt;br&gt;3. GBM 目标：旧版（clipped）先把 w* 截到 [0,1] 再回归，不等于融合 MSE；新版（mse）不截断目标、预测后再截断。clipped 仍可用于复现旧结果。&lt;br&gt;4. mix 协方差用标量 wc = (w_p + w_v)/2，而均值对 p、v 用不同权重：它是启发式公式，不是关于当前均值的精确矩匹配（审查报告 M1），论文里要如实命名。&lt;br&gt;5. 所有选择（合作方、权重、协方差方式、尺度）只用验证集或新种子数据；测试集只用于最终评价。" vertex="1">
+          <mxGeometry height="300" width="1630" x="40" y="790" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="8 标定与评估协议" id="BJCoxZ31NnxyckUJGKFs">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;每个量在哪份数据上确定（防止测试集泄漏）&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1500" x="30" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;量&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="380" x="40" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;用哪份数据确定&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="640" x="430" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1EFE8;strokeColor=#888780;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;代码&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="480" x="1080" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="专家网络权重" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="专家自己的训练集（只含本模式）" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;train_bkn_vec.py&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="σ_p, σ_v, σ_a；S_nom, S_rob；γ" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="专家自己的验证集（valid_long）" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5EE;strokeColor=#1D9E75;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;Expert.calibrate&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="s_key, τ, coupling, mix, stay" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="仿真：S-C 验证集（seed 21）；半实测：dev 第 1 份" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEDFE;strokeColor=#7F77DD;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval_fusion.py STAGE_A/B&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="经典方法参数（含 CT/CT-EKF）" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="目标测试预设的验证集（仿真 seed 31+k；半实测 dev 第 2 份）" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;classical_methods / ctekf_methods&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="合作方、固定权重、协方差方式、k₁、k₂" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="同上（目标预设的验证集）" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;hybrid.build_rows&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="GBM 权重" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="新种子轨迹（仿真 seed 5000+k；半实测 dev 第 1 份）" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;build_rows: gbm_train&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="所有方法的最终尺度 κ_p, κ_v" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="c24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="目标预设的验证集" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="c25" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;eval_fusion.py: cov_scale&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="c26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="指标与显著性" vertex="1">
+          <mxGeometry height="52" width="380" x="40" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="c27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="冻结的测试集（仿真 seed +1000；OpenSky 留出的飞机）" vertex="1">
+          <mxGeometry height="52" width="640" x="430" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="c28" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=13;align=center;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;font face=&quot;Courier New&quot; color=&quot;#555555&quot; style=&quot;font-size:11px&quot;&gt;metrics.py / bootstrap_sig.py&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="480" x="1080" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="c29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDECEA;strokeColor=#C62828;fontSize=13;align=left;verticalAlign=middle;spacing=6;arcSize=8;" value="&lt;b&gt;审核要点&lt;/b&gt;&lt;br&gt;1. 测试集只在最后一步出现；任何“选择”都不应读取 test 的真值（可在 eval_fusion.py 中检查 data[&quot;state&quot;] 只被 summarize / per_trajectory 使用）。&lt;br&gt;2. 融合超参数在仿真里固定用 S-C 验证集选（不随测试切分变化），经典方法和混合层则在各测试预设自己的验证集上调。&lt;br&gt;3. MC dropout 的随机种子按（场景、切分、方法、验证/测试）固定，结果不依赖同时评估了哪些方法；但超参数搜索阶段共用全局随机流（审查报告 R3），12 次运行中有 3 次近似并列被翻转。&lt;br&gt;4. S-E 的经典方法和混合层都在 S-E 的验证数据上调过（含转弯）；只有 BKN 专家没见过转弯。冻结层行才是整套方法的未见转弯检验。" vertex="1">
+          <mxGeometry height="220" width="1520" x="40" y="640" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
