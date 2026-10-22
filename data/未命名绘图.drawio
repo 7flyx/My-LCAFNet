@@ -1,16 +1,16 @@
 <mxfile host="app.diagrams.net" pages="8">
   <diagram name="1 总览：从数据到结论" id="XmD-W-OxOPLXBrssO3-P">
-    <mxGraphModel dx="785" dy="480" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1000" math="0" shadow="0">
+    <mxGraphModel dx="2612" dy="1550" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="c24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#185FA5;dashed=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#185FA5;arcSize=3;" value="C 后处理与评估" vertex="1">
+        <mxCell id="c24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1327A5;fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#185FA5;arcSize=3;strokeWidth=2;" value="C 后处理与评估" vertex="1">
           <mxGeometry height="880" width="680" x="1000" y="60" as="geometry" />
         </mxCell>
-        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#7F77DD;dashed=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#7F77DD;arcSize=3;" value="B 在线：MM-BKN 每个时间步（详见第 2 页）" vertex="1">
+        <mxCell id="c8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#3c2de1, #7e77cf);fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#7F77DD;arcSize=3;strokeWidth=2;" value="B 在线：MM-BKN 每个时间步（详见第 2 页）" vertex="1">
           <mxGeometry height="880" width="560" x="420" y="60" as="geometry" />
         </mxCell>
-        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9E9E9E;dashed=1;fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#9E9E9E;arcSize=3;" value="A 离线：数据与专家训练" vertex="1">
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#3ade0d, #656565);fontSize=13;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontStyle=1;fontColor=#9E9E9E;arcSize=3;strokeWidth=2;" value="A 离线：数据与专家训练" vertex="1">
           <mxGeometry height="880" width="380" x="20" y="50" as="geometry" />
         </mxCell>
         <mxCell id="c1" parent="1" style="text;html=1;whiteSpace=wrap;fontSize=20;align=left;verticalAlign=top;fontColor=#1B2430;spacing=2;" value="&lt;b style=&#39;font-size:20px&#39;&gt;MM-BKN 与混合方法：整体数据流（离线训练 → 在线逐步滤波 → 混合层 → 评估）&lt;/b&gt;" vertex="1">
