@@ -747,7 +747,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="rXZMWLgMFQcWPNq5u993" name="数据生成">
-    <mxGraphModel dx="991" dy="588" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="882" dy="523" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -828,6 +828,9 @@
         </mxCell>
         <mxCell id="CvU-tJYW8zhHmZapd5v1-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="循环T个时间步" vertex="1">
           <mxGeometry height="30" width="100" x="536" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="CvU-tJYW8zhHmZapd5v1-24" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;" value="&lt;font style=&quot;font-size: 5px;&quot;&gt;带随机扰动的w&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="60" x="1091" y="200" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
